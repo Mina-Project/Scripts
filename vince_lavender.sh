@@ -9,6 +9,9 @@ elif [[ $parse_branch == "lavender" ]]; then
      export device="Xiaomi Redmi Note 7/7S"
      export codename_device=lavender
      export config_device=lavender-perf_defconfig
+elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; then
+     echo "please set the kernel branch name as above"
+     exit 1;
 fi
 mkdir $(pwd)/TEMP
 git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
