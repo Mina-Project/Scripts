@@ -44,11 +44,11 @@ tg_channelcast() {
 	)"
 }
 tg_sendinfo() {
-	curl -s "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-		-d chat_id="$fadlyas" \
-		-d "parse_mode=markdown" \
-		-d "disable_web_page_preview=true" \
-		-d text="$1"
+  curl -s "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+  -d chat_id="784548477" \
+  -d "parse_mode=markdown" \
+  -d "disable_web_page_preview=true" \
+  -d text="$1"
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -68,17 +68,18 @@ if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
 	tg_sendinfo "$product_name $device Build Failed!!"
 	exit 1;
+else
+    mv $kernel_img $pack/zImage
 fi
-curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
-mv $kernel_img $pack/zImage
+curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 cd $pack
-zip -r9 $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
+zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
 cd ..
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
 tg_channelcast "<b>$product_name new build is available</b>!" \
 	       "<b>Device :</b> <code>$device</code>" \
 	       "<b>Branch :</b> <code>$parse_branch</code>" \
-               "<b>Toolchain :</b> <code>$toolchain_ver</code>" \
+           "<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 	       "<b>Latest commit :</b> $commit_point"
 curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
