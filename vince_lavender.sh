@@ -14,9 +14,14 @@ elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; th
      exit 1;
 fi
 mkdir $(pwd)/TEMP
-git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc32
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc
+if [[ $parse_branch == "vince" ]]; then
+     git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
+     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
+     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
+elif [[ $parse_branch == "lavender" ]]; then
+     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
+     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
+fi
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
@@ -31,7 +36,6 @@ export product_name=GREENFORCE
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export commit_point=$(git log --pretty=format:'<code>%h: %s by</code> <b>%an</b>' -1)
 
 TELEGRAM=telegram/telegram
@@ -55,14 +59,26 @@ tg_sendstick() {
 	-d sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE" \
 	-d chat_id="$TELEGRAM_ID"
 }
+if [[ $parse_branch == "vince" ]]; then 
+      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+elif [[ $parse_branch == "lavender" ]]; then
+       export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+fi
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device"
+if [[ $parse_branch == "vince" ]]; then 
 make -j$(nproc) O=out \
                 ARCH=arm64 \
                 CC=clang \
                 CLANG_TRIPLE=aarch64-linux-gnu- \
                 CROSS_COMPILE=aarch64-linux-android- \
                 CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+elif [[ $parse_branch == "lavender" ]]; then
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+fi
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
         curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
