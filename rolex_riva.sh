@@ -79,14 +79,6 @@ tg_sendstick() {
 	-d sticker="$STICKER" \
 	-d chat_id="$TELEGRAM_ID"
 }
-if [[ $kernel_type == "HmP" ]]; then
-      export PATH=$(pwd)/clang/bin:$PATH
-      export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
-elif [[ $kernel_type == "EaS" ]]; then
-      export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-else
-      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
 make_kernel() {
 if [[ $kernel_type == "HmP" ]]; then
 make -j$(nproc) O=out \
@@ -108,6 +100,14 @@ make -j$(nproc) O=out \
                 CROSS_COMPILE=aarch64-linux-android- \
                 CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 }
+if [[ $kernel_type == "HmP" ]]; then
+      export PATH=$(pwd)/clang/bin:$PATH
+      export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
+elif [[ $kernel_type == "EaS" ]]; then
+      export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+else
+      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+fi
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device1"
 make_kernel
