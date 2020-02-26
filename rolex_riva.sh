@@ -79,7 +79,16 @@ tg_sendstick() {
 	-d sticker="$STICKER" \
 	-d chat_id="$TELEGRAM_ID"
 }
-make_kernel() {
+if [[ $kernel_type == "HmP" ]]; then
+      export PATH=$(pwd)/clang/bin:$PATH
+      export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
+elif [[ $kernel_type == "EaS" ]]; then
+      export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+else
+      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+fi
+date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+make O=out ARCH=arm64 "$config_device1"
 if [[ $kernel_type == "HmP" ]]; then
 make -j$(nproc) O=out \
                 ARCH=arm64 \
@@ -99,18 +108,6 @@ make -j$(nproc) O=out \
                 CLANG_TRIPLE=aarch64-linux-gnu- \
                 CROSS_COMPILE=aarch64-linux-android- \
                 CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
-}
-if [[ $kernel_type == "HmP" ]]; then
-      export PATH=$(pwd)/clang/bin:$PATH
-      export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
-elif [[ $kernel_type == "EaS" ]]; then
-      export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-else
-      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
-date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-make O=out ARCH=arm64 "$config_device1"
-make_kernel
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
         curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
@@ -126,7 +123,25 @@ cd ..
 rm -rf out/ $TEMP/*.log
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device2"
-make_kernel
+if [[ $kernel_type == "HmP" ]]; then
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-gnu- \
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+elif [[ $kernel_type == "EaS" ]]; then
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+else
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
         curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
