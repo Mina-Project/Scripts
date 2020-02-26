@@ -69,8 +69,8 @@ tg_channelcast() {
 tg_sendinfo() {
     "$TELEGRAM" -c "784548477" -H \
     "$(
-		for POST in "${@}"; do
-			echo "${POST}"
+		for POST in "$@"; do
+			echo "$POST"
 		done
     )"
 }
@@ -121,7 +121,7 @@ else
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 cd $pack1
-zip -rT9 $product_name-$kernel_type-$codename_device1-$date1.zip * -x .git README.md LICENCE
+zip -r9 $product_name-$kernel_type-$codename_device1-$date1.zip * -x .git README.md LICENCE
 cd ..
 rm -rf out/ $TEMP/*.log
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
@@ -137,7 +137,7 @@ else
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 cd $pack2
-zip -rT9 $product_name-$kernel_type-$codename_device2-$date2.zip * -x .git README.md LICENCE
+zip -r9 $product_name-$kernel_type-$codename_device2-$date2.zip * -x .git README.md LICENCE
 cd ..
 export device="Xiaomi Redmi 4A/5A"
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
