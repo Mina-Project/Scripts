@@ -106,7 +106,6 @@ tg_makedevice2() {
 export LD_LIBRARY_PATH=$(pwd)/toolchain/clang/lib:$LD_LIBRARY_PATH
 make O=out ARCH=arm64 $config_device2
 PATH=$(pwd)/toolchain/clang/bin:$PATH \
-PATH="$KERNEL_DIR/gcc/bin:$KERNEL_DIR/gcc32/bin:$PATH" \
 tg_makegcc
 }
 
