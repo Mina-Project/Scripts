@@ -2,9 +2,9 @@
 # Circle CI/CD - kernel build script
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
+git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip1
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip2
-git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 TELEGRAM_ID=$chat_id
 TELEGRAM_TOKEN=$token
 export TELEGRAM_TOKEN TELEGRAM_ID
