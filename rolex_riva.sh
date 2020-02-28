@@ -130,11 +130,11 @@ zip -r9q $KERNEL_NAME-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README
 cd ..
 toolchain_ver=$(cat out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
-tg_channelcast 	"<b>$KERNEL_NAME new build is available</b>!" \
-		"<b>Device :</b> <code>$UNIFIED</code>" \
-		"<b>Kernel Type :</b> <code>$KERNEL_TYPE</code>" \
-		"<b>Branch :</b> <code>$PARSE_BRANCH</code>" \
-		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
-		"<b>Latest commit :</b> $COMMIT_POINT"
+tg_channelcast "<b>$KERNEL_NAME new build is available</b>!" \
+	       "<b>Device :</b> <code>$UNIFIED</code>" \
+	       "<b>Kernel Type :</b> <code>$KERNEL_TYPE</code>" \
+	       "<b>Branch :</b> <code>$PARSE_BRANCH</code>" \
+	       "<b>Toolchain :</b> <code>$toolchain_ver</code>" \
+	       "<b>Latest commit :</b> $COMMIT_POINT"
 curl -F document=@$(echo $pack1/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack2/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
