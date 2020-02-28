@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 # Circle CI/CD - kernel build script
-mkdir -p toolchain/clang
-wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
-tar -I zstd -xvf *.tar.zst -C toolchain/clang --strip-components=1
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip1
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip2
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 TELEGRAM_ID=$chat_id
 TELEGRAM_TOKEN=$token
 export TELEGRAM_TOKEN TELEGRAM_ID
-rm -rf *.tar.zst
 
 # Device 1
 codename_device1="rolex"
@@ -75,10 +73,8 @@ tg_channelcast() {
 tg_makegcc() {
 	make -j$(nproc) O=out \
                 ARCH=arm64 \
-                CC=clang \
-                CLANG_TRIPLE=aarch64-linux-gnu- \
-                CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -97,15 +93,13 @@ tg_pushlog() {
 	-F chat_id="$fadlyas"
 }
 tg_makedevice1() {
-export LD_LIBRARY_PATH=$(pwd)/toolchain/clang/lib:$LD_LIBRARY_PATH
 make O=out ARCH=arm64 $config_device1
-PATH=$(pwd)/toolchain/clang/bin:$PATH \
+PATH="$KERNEL_DIR/gcc/bin:$KERNEL_DIR/gcc32/bin:$PATH" \
 tg_makegcc
 }
 tg_makedevice2() {
-export LD_LIBRARY_PATH=$(pwd)/toolchain/clang/lib:$LD_LIBRARY_PATH
 make O=out ARCH=arm64 $config_device2
-PATH=$(pwd)/toolchain/clang/bin:$PATH \
+PATH="$KERNEL_DIR/gcc/bin:$KERNEL_DIR/gcc32/bin:$PATH" \
 tg_makegcc
 }
 
