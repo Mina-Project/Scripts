@@ -99,13 +99,13 @@ curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOK
 cd $pack
 zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
 cd ..
-kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d "" -f3)
+kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
 tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Device :</b> <code>$device</code>" \
 		"<b>Branch :</b> <code>$parse_branch</code>" \
-		"<b>Kernel Version :</b> Linux <code>$kernel_type</code>" \
+		"<b>Kernel Version :</b> Linux <code>$kernel_ver</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
 curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
