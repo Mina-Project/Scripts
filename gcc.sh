@@ -103,6 +103,7 @@ mv $kernel_img $pack2/zImage
 cd $pack2
 zip -r9q $kernel_name-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README.md LICENCE
 cd ..
+
 toolchain_ver=$(cat $KERNEL_DIR/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
 tg_channelcast "<b>$kernel_name new build is available</b>!" \
