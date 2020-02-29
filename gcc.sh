@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Circle CI/CD - Simple kernel build script
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
+# Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-export commit_point=$(git log --pretty=format:'<code>%h: %s by</code> <b>%an</b>' -1)
+export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 # Environtment for Device 1
 export codename_device1=rolex
@@ -113,6 +114,6 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Kernel Type :</b> <code>$kernel_type</code>" \
 		"<b>Branch :</b> <code>$parse_branch</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
-		"<b>Latest commit :</b> $commit_point"
+		"<b>Latest commit :</b> <code>$commit_point</code>" \
 curl -F document=@$(echo $pack1/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack2/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
