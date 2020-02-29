@@ -15,10 +15,10 @@ export config_device2=riva_defconfig
 
 # Environtment Vars
 export ARCH=arm64
+export kernel_type=EaS
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
 export pack2=$(pwd)/zip2
-export kernel_type=EaS
 export TELEGRAM_ID=$chat_id
 export TELEGRAM_TOKEN=$token
 export product_name=GREENFORCE
@@ -91,7 +91,7 @@ cd ..
 # clean out & log before compile again
 rm -rf out/ $TEMP/*.log
 
-Time to compile Device 2
+# Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice2
 mv *.log $TEMP
