@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 # Circle CI/CD - kernel build script
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip1
 git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip2
-TELEGRAM_ID=$chat_id
-TELEGRAM_TOKEN=$token
-export TELEGRAM_TOKEN TELEGRAM_ID
+export TELEGRAM_ID=$chat_id
+export TELEGRAM_TOKEN=$token
 
 # Device 1
-codename_device1="rolex"
-config_device1="rolex_defconfig"
+export codename_device1="rolex"
+export config_device1="rolex_defconfig"
 
 # Device 2
-codename_device2="riva"
-config_device2="riva_defconfig"
+export codename_device2="riva"
+export config_device2="riva_defconfig"
 
 # Github Env Vars
 KERNEL_NAME="GREENFORCE"
@@ -27,37 +26,13 @@ pack1="$KERNEL_DIR/zip1"
 pack2="$KERNEL_DIR/zip2"
 KERNEL_IMG="$KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb"
 
-# Find kernel branch
-if [ "$PARSE_BRANCH" == "HMP-vdso32" ]; then
-	KERNEL_TYPE=HmP
-	export $KERNEL_TYPE
-	STICKER="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
-	export $STICKER
-elif [ "$PARSE_BRANCH" == "EAS" ]; then
-	KERNEL_TYPE=EaS
-	export $KERNEL_TYPE
-	STICKER="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-	export $STICKER
-elif [ "$PARSE_BRANCH" == "aosp/android-3.18" ]; then
-	KERNEL_TYPE=Pure-CaF
-	export $KERNEL_TYPE
-	STICKER="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
-	export $STICKER
-elif [ ! "$KERNEL_TYPE" ]; then
-	KERNEL_TYPE=Test
-	export $KERNEL_TYPE
-	STICKER="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
-	export $STICKER
-fi
-
 # create temp dir for kernel log
 mkdir $KERNEL_DIR/TEMP
 TEMP="$KERNEL_DIR/TEMP"
 
-export STICKER
-export KERNEL_TYPE
 export ARCH=arm64
 export TZ=":Asia/Jakarta"
+export KERNEL_TYPE=EaS
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 
@@ -78,15 +53,16 @@ tg_makegcc() {
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
-	-d sticker="$STICKER" \
+	-d sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE" \
 	-d chat_id="$TELEGRAM_ID"
 }
 tg_sendinfo() {
-   curl -s "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-	-d "parse_mode=markdown" \
-	-d text="$1" \
-	-d chat_id="${TELEGRAM_ID}" \
-	-d "disable_web_page_preview=true"
+    "$TELEGRAM" -c "$fadlyas" -H \
+	"$(
+		for POST in "$@"; do
+			echo "$POST"
+		done
+	)"
 }
 tg_pushlog() {
    curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
@@ -137,7 +113,7 @@ zip -r9q $KERNEL_NAME-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README
 cd ..
 toolchain_ver=$(cat $KERNEL_DIR/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
-tg_channelcast 	"<b>$KERNEL_NAME new build is available</b>!" \
+tg_channelcast "<b>$KERNEL_NAME new build is available</b>!" \
 		"<b>Device :</b> <code>$UNIFIED</code>" \
 		"<b>Kernel Type :</b> <code>$KERNEL_TYPE</code>" \
 		"<b>Branch :</b> <code>$PARSE_BRANCH</code>" \
