@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-# Circle CI/CD - kernel build script
+# Circle CI/CD - Simple kernel build script
+# Copyright (C) 2019 Raphielscape LLC (@raphielscape)
+# Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export commit_point=$(git log --pretty=format:'<code>%h: %s by</code> <b>%an</b>' -1)
 
-# Device 1
+# Environtment for Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 
-# Device 2
+# Environtment for Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 
-# Github Env Vars
+# Environtment Vars
 export ARCH=arm64
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
@@ -19,7 +21,7 @@ export pack2=$(pwd)/zip2
 export kernel_type=EaS
 export TELEGRAM_ID=$chat_id
 export TELEGRAM_TOKEN=$token
-export kernel_name="GREENFORCE"
+export product_name=GREENFORCE
 export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
@@ -71,42 +73,42 @@ make O=out ARCH=arm64 $config_device2
 tg_makegcc
 }
 
-# Make device 1
+# Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
-	tg_sendinfo "<b>$kernel_name $kernel_type Build Failed</b>!!"
+	tg_sendinfo "<b>$product_name $kernel_type Build Failed</b>!!"
 	exit 1
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
 mv $kernel_img $pack1/zImage
 cd $pack1
-zip -r9q $kernel_name-$codename_device1-$kernel_type-$date1.zip * -x .git README.md LICENCE
+zip -r9q $product_name-$codename_device1-$kernel_type-$date1.zip * -x .git README.md LICENCE
 cd ..
 
-# clean out & log for anticipation dirty build
+# clean out & log before compile again
 rm -rf out/ $TEMP/*.log
 
-# Make device 2
+Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice2
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
-	tg_sendinfo "<b>$kernel_name $kernel_type Build Failed</b>!!"
+	tg_sendinfo "<b>$product_name $kernel_type Build Failed</b>!!"
 	exit 1
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
 mv $kernel_img $pack2/zImage
 cd $pack2
-zip -r9q $kernel_name-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README.md LICENCE
+zip -r9q $product_name-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README.md LICENCE
 cd ..
 
 toolchain_ver=$(cat $KERNEL_DIR/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
-tg_channelcast "<b>$kernel_name new build is available</b>!" \
+tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Device :</b> <code>$device</code>" \
 		"<b>Kernel Type :</b> <code>$kernel_type</code>" \
 		"<b>Branch :</b> <code>$parse_branch</code>" \
