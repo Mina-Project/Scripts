@@ -104,7 +104,7 @@ fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
 mv $kernel_img $pack2/zImage
 cd $pack2
-zip -r9q $product_name-$codename_device2-$KERNEL_TYPE-$date2.zip * -x .git README.md LICENCE
+zip -r9q $product_name-$codename_device2-$kernel_type-$date2.zip * -x .git README.md LICENCE
 cd ..
 
 toolchain_ver=$(cat $KERNEL_DIR/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
@@ -114,6 +114,6 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Kernel Type :</b> <code>$kernel_type</code>" \
 		"<b>Branch :</b> <code>$parse_branch</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
-		"<b>Latest commit :</b> <code>$commit_point</code>" \
+		"<b>Latest commit :</b> <code>$commit_point</code>"
 curl -F document=@$(echo $pack1/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack2/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
