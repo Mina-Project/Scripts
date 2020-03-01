@@ -1,2 +1,2 @@
 # Scripts
-My personal scripts for building kernel by bot xD :v
+My personal scripts for building kernel
