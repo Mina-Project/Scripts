@@ -4,7 +4,16 @@
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
+if [ "$parse_branch" == "HMP-vdso32" ]; then
+	export kernel_type=Hmp
+	export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
+elif [ "$parse_branch" == "aosp/android-3.18" ]; then
+	export kernel_type=PuRe-CaF
+	export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
+elif [ ! "$kernel_type" ]; then
+	export kernel_type=Test-Build
+	export sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
+fi
 
 # Environtment for Device 1
 export codename_device1=rolex
@@ -26,18 +35,8 @@ export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-
-if [ "$parse_branch" == "HMP-vdso32" ]; then
-	export kernel_type=Hmp
-	export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
-elif [ "$parse_branch" == "aosp/android-3.18" ]; then
-	export kernel_type=PuRe-CaF
-	export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
-elif [ ! "$kernel_type" ]; then
-	export kernel_type=Test-Build
-	export sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
-fi
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
@@ -45,8 +44,8 @@ git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linu
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
 git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
-git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip1
-git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip2
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
 
 TELEGRAM=telegram/telegram
 tg_channelcast() {
