@@ -105,7 +105,7 @@ cd ..
 # clean out & log before compile again
 rm -rf out/ $TEMP/*.log
 
-Time to compile Device 2
+# Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice2
 mv *.log $TEMP
