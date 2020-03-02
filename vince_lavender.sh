@@ -13,8 +13,8 @@ elif [[ $parse_branch == "lavender" ]]; then
      export codename_device=lavender
      export config_device=lavender-perf_defconfig
 elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; then
-     echo "please set the kernel branch name as above"
-     exit 1;
+     echo "please set the name of kernel branch as above"
+     exit 1
 fi
 mkdir $(pwd)/TEMP
 if [[ $parse_branch == "vince" ]]; then
@@ -26,7 +26,7 @@ elif [[ $parse_branch == "lavender" ]]; then
      git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
      git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
 fi
-git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 anykernel3
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
 # Environtment Vars
@@ -91,7 +91,7 @@ mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
         curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
 	tg_sendinfo "$product_name $device Build Failed!!"
-	exit 1;
+	exit 1
 else
         mv $kernel_img $pack/zImage
 fi
