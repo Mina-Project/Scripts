@@ -34,8 +34,8 @@ export TEMP=$(pwd)/TEMP
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
-git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip1
-git clone --depth=1 https://github.com/fadlyas07/AnyKernel3-1 zip2
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
 
 TELEGRAM=telegram/telegram
 tg_channelcast() {
@@ -47,7 +47,7 @@ tg_channelcast() {
 	)"
 }
 tg_makegcc() {
-	make -j$(nproc) O=out \
+make -j$(nproc) O=out \
                 ARCH=arm64 \
                 CROSS_COMPILE=aarch64-linux-android- \
                 CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
