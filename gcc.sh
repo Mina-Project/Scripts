@@ -4,15 +4,16 @@
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 # Environtment for Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
+export config1=$(pwd)/arch/arm64/configs/"$config_device1"
 
 # Environtment for Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
+export config2=$(pwd)/arch/arm64/configs/"$config_device2"
 
 # Environtment Vars
 export ARCH=arm64
@@ -28,6 +29,7 @@ export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
@@ -76,6 +78,7 @@ tg_makegcc
 
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+sed -i -e 's/-그린포스★★EAS★★[EnergyAwareScheduling]/-그린포스★★EAS★★['%d%m%y']/g' $config1
 tg_makedevice1
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
@@ -94,6 +97,7 @@ rm -rf out/ $TEMP/*.log
 
 Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+sed -i -e 's/-그린포스★★EAS★★[EnergyAwareScheduling]/-그린포스★★EAS★★['%d%m%y']/g' $config2
 tg_makedevice2
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
