@@ -89,7 +89,7 @@ make -j$(nproc) O=out \
 fi
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
-        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$fadlyas"
+        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 	tg_sendinfo "$product_name $device Build Failed!!"
 	exit 1
 else
