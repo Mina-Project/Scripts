@@ -95,7 +95,7 @@ cd ..
 # clean out & log before compile again
 rm -rf out/ $TEMP/*.log
 
-Time to compile Device 2
+# Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 sed -i -e 's/-그린포스★★EAS★★[EnergyAwareScheduling]/-그린포스★★EAS★★['%d-%m-%y']/g' $config2
 tg_makedevice2
