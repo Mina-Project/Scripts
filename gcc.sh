@@ -26,15 +26,15 @@ export TELEGRAM_TOKEN=$token
 export product_name=GREENFORCE
 export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
-export PATH=$(pwd)/toolchain/proton/bin:$PATH
+export PATH=$(pwd)/clang/bin:$PATH
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-export LD_LIBRARY_PATH=$(pwd)/proton/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-git clone --depth=1 https://github.com/HANA-CI-Build-Project/proton-clang proton
+git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 -b 11.0.0 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -71,12 +71,12 @@ tg_sendinfo() {
 }
 tg_makedevice1() {
 make O=out ARCH=arm64 $config_device1
-PATH=$(pwd)/toolchain/proton/bin:$PATH \
+PATH=$(pwd)/clang/bin:$PATH \
 tg_makeclang
 }
 tg_makedevice2() {
 make O=out ARCH=arm64 $config_device2
-PATH=$(pwd)/toolchain/proton/bin:$PATH \
+PATH=$(pwd)/clang/bin:$PATH \
 tg_makeclang
 }
 
