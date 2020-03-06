@@ -71,10 +71,12 @@ tg_sendinfo() {
 }
 tg_makedevice1() {
 make O=out ARCH=arm64 $config_device1
+PATH=$(pwd)/toolchain/proton/bin:$PATH \
 tg_makeclang
 }
 tg_makedevice2() {
 make O=out ARCH=arm64 $config_device2
+PATH=$(pwd)/toolchain/proton/bin:$PATH \
 tg_makeclang
 }
 
