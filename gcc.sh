@@ -29,8 +29,8 @@ export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export PATH=$(pwd)/toolchain/proton/bin:$PATH
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export LD_LIBRARY_PATH=$(pwd)/proton/lib:$LD_LIBRARY_PATH
+export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
