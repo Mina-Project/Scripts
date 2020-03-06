@@ -5,17 +5,17 @@
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 
-# Environtment for Device 1
+# Environment for Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 export config1=$(pwd)/arch/arm64/configs/"$config_device1"
 
-# Environtment for Device 2
+# Environment for Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 export config2=$(pwd)/arch/arm64/configs/"$config_device2"
 
-# Environtment Vars
+# Environment Vars
 export ARCH=arm64
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
