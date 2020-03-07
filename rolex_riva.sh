@@ -41,10 +41,7 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 if [ "$parse_branch" == "HMP-vdso32" ]; then
-    mkdir -p tc/clang
-    wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
-    tar -I zstd -xvf *.tar.zst -C tc/clang --strip-components=1
-    rm *.tar.zst
+    git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 tc/clang
 else
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
@@ -70,7 +67,7 @@ if [ "$parse_branch" == "HMP-vdso32" ]; then
                     CC=clang \
                     CLANG_TRIPLE=aarch64-linux-gnu- \
                     CROSS_COMPILE=aarch64-linux-gnu- \
-                    CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+                    CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
     }
 else
     tg_makeclang () {
@@ -79,7 +76,7 @@ else
                     CC=clang \
                     CLANG_TRIPLE=aarch64-linux-gnu- \
                     CROSS_COMPILE=aarch64-linux-android- \
-                    CROSS_COMPILE_ARM32=arm-linux-androideabi-
+                    CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
     }
 fi
 tg_sendstick() {
