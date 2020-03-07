@@ -5,17 +5,17 @@
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 
-# Environtment for Device 1
+# Environment Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 export config1=$(pwd)/arch/arm64/configs/"$config_device1"
 
-# Environtment for Device 2
+# Environment Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 export config2=$(pwd)/arch/arm64/configs/"$config_device2"
 
-# Environtment Vars
+# Environment Vars
 export ARCH=arm64
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
@@ -26,15 +26,15 @@ export TELEGRAM_TOKEN=$token
 export product_name=GREENFORCE
 export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
+export PATH=$(pwd)/clang/bin:$PATH
 export KBUILD_BUILD_USER=github.com.fadlyas07
-export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
+git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 -b 11.0.0 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -48,11 +48,13 @@ tg_channelcast() {
 		done
 	)"
 }
-tg_makegcc() {
+tg_makeclang() {
 make -j$(nproc) O=out \
                 ARCH=arm64 \
-                CROSS_COMPILE=aarch64-linux-android- \
-                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-gnu- \
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -68,12 +70,14 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make O=out ARCH=arm64 "$config_device1"
-tg_makegcc
+make O=out ARCH=arm64 $config_device1
+PATH=$(pwd)/clang/bin:$PATH \
+tg_makeclang
 }
 tg_makedevice2() {
-make O=out ARCH=arm64 "$config_device2"
-tg_makegcc
+make O=out ARCH=arm64 $config_device2
+PATH=$(pwd)/clang/bin:$PATH \
+tg_makeclang
 }
 
 # Time to compile Device 1
