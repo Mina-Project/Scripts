@@ -35,16 +35,16 @@ export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export LD_LIBRARY_PATH=$(pwd)/tc/clang/lib:$LD_LIBRARY_PATH
+export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 if [ "$parse_branch" == "HMP-vdso32" ]; then
-	mkdir -p tc/clang
-	wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
-	tar -I zstd -xvf *.tar.zst -C tc/clang --strip-components=1
-	rm *.tar.zst
+    mkdir -p tc/clang
+    wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
+    tar -I zstd -xvf *.tar.zst -C tc/clang --strip-components=1
+    rm *.tar.zst
 else
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
