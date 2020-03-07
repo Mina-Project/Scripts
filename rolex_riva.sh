@@ -15,15 +15,15 @@ elif [ ! "$kernel_type" ]; then
 	export sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
 fi
 
-# Environtment for Device 1
+# Environment Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 
-# Environtment for Device 2
+# Environment Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 
-# Environtment Vars
+# Environment Vars
 export ARCH=arm64
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
@@ -36,13 +36,20 @@ export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
-export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+export LD_LIBRARY_PATH=$(pwd)/tc/clang/lib:$LD_LIBRARY_PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
+if [ "$parse_branch" == "HMP-vdso32" ]; then
+	mkdir -p tc/clang
+	wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
+	tar -I zstd -xvf *.tar.zst -C tc/clang --strip-components=1
+	rm *.tar.zst
+else
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+    git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 tc/clang
+fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -56,14 +63,25 @@ tg_channelcast() {
 		done
 	)"
 }
-tg_makeclang() {
-make -j$(nproc) O=out \
-		ARCH=arm64 \
-		CC=clang \
-		CLANG_TRIPLE=aarch64-linux-gnu- \
-		CROSS_COMPILE=aarch64-linux-android- \
-		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
-}
+if [ "$parse_branch" == "HMP-vdso32" ]; then
+    tg_makeclang () {
+    make -j$(nproc) O=out \
+                    ARCH=arm64 \
+                    CC=clang \
+                    CLANG_TRIPLE=aarch64-linux-gnu- \
+                    CROSS_COMPILE=aarch64-linux-gnu- \
+                    CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+    }
+else
+    tg_makeclang () {
+    make -j$(nproc) O=out \
+                    ARCH=arm64 \
+                    CC=clang \
+                    CLANG_TRIPLE=aarch64-linux-gnu- \
+                    CROSS_COMPILE=aarch64-linux-android- \
+                    CROSS_COMPILE_ARM32=arm-linux-androideabi-
+    }
+fi
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
 	-d sticker="$sticker" \
@@ -78,13 +96,18 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make O=out ARCH=arm64 $config_device1
+make O=out ARCH=arm64 "$config_device1"
 tg_makeclang
 }
 tg_makedevice2() {
-make O=out ARCH=arm64 $config_device2
+make O=out ARCH=arm64 "$config_device2"
 tg_makeclang
 }
+if [ "$parse_branch" == "HMP-vdso32" ]; then
+    export PATH=$(pwd)/tc/clang/bin:$PATH
+else
+    export PATH=$(pwd)/tc/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+fi
 
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
