@@ -15,15 +15,15 @@ elif [ ! "$kernel_type" ]; then
 	export sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
 fi
 
-# Environtment for Device 1
+# Environment for Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 
-# Environtment for Device 2
+# Environment for Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 
-# Environtment Vars
+# Environment Vars
 export ARCH=arm64
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
