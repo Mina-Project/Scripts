@@ -8,12 +8,10 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 # Environment Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
-export config1=$(pwd)/arch/arm64/configs/"$config_device1"
 
 # Environment Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
-export config2=$(pwd)/arch/arm64/configs/"$config_device2"
 
 # Environment Vars
 export ARCH=arm64
@@ -82,7 +80,6 @@ tg_makeclang
 
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-sed -i -e 's/-그린포스★★EAS★★[EnergyAwareScheduling]/-그린포스★★EAS★★['%d-%m-%y']/g' $config1
 tg_makedevice1
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
@@ -102,7 +99,6 @@ rm -rf out/ $TEMP/*.log
 
 # Time to compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-sed -i -e 's/-그린포스★★EAS★★[EnergyAwareScheduling]/-그린포스★★EAS★★['%d-%m-%y']/g' $config2
 tg_makedevice2
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
