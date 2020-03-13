@@ -57,12 +57,12 @@ tg_channelcast() {
 	)"
 }
 tg_makeclang() {
-make -j$(nproc --all) O=out \
-		      ARCH=arm64 \
-		      CC=clang \
-		      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE=aarch64-linux-android- \
-		      CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+make -j$(nproc) O=out \
+		ARCH=arm64 \
+		CC=clang \
+		CLANG_TRIPLE=aarch64-linux-gnu- \
+		CROSS_COMPILE=aarch64-linux-android- \
+		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -98,7 +98,7 @@ fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 mv $kernel_img $pack1/zImage
 cd $pack1
-7za a -bso0 -mx=9 -mpass=15 -mmt="$(nproc)" "$product_name-$codename_device1-$kernel_type-$date1.zip" ./* -x'!'README.md -x'!'LICENCE -xr'!'*.zip
+zip -r9q $product_name-$codename_device1-$kernel_type-$date1.zip * -x .git README.md LICENCE
 cd ..
 
 # clean out & log before compile again
@@ -116,7 +116,7 @@ fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 mv $kernel_img $pack2/zImage
 cd $pack2
-7za a -bso0 -mx=9 -mpass=15 -mmt="$(nproc)" "$product_name-$codename_device2-$kernel_type-$date2.zip" ./* -x'!'README.md -x'!'LICENCE -xr'!'*.zip
+zip -r9q $product_name-$codename_device2-$kernel_type-$date2.zip * -x .git README.md LICENCE
 cd ..
 
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
