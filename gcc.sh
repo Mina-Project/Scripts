@@ -42,12 +42,9 @@ if [ "$parse_branch" == "aosp/eas-3.18" ]; then
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 elif [ "$parse_branch" == "aware" ]; then
     echo "processing..." # Download GCC 9.2-2019 arm32
-    wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
-    mv gcc-arm-9.2-2019.12-x86_64-arm-none-eabi $(pwd)/gcc32
+    git clone --depth=1 https://github.com/baalajimaestro/arm-maestro-linux-gnueabi -b 07032020-9.2.1 gcc32
     echo "processing..." # Download GCC 9.2-2019 aarch64
-    wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
-    mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf $(pwd)/gcc
-    rm gcc*.tar.xz
+    git clone --depth=1 https://github.com/baalajimaestro/aarch64-maestro-linux-android -b 07032020-9.2.1 gcc
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
@@ -71,8 +68,8 @@ if [ "$parse_branch" == "aware" ]; then
     tg_makegcc () {
         make -j$(nproc --all) O=out \
                               ARCH=arm64 \
-                              CROSS_COMPILE=aarch64-linux-gnu- \
-                              CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+                              CROSS_COMPILE=aarch64-maestro-linux-gnu- \
+                              CROSS_COMPILE_ARM32=arm-maestro-linux-gnueabi- 2>&1| tee kernel.log
     }
 else
     tg_makegcc () {
