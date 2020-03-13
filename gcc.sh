@@ -4,20 +4,24 @@
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$parse_branch" == "aosp/eas-3.18" ]; then
+	export kernel_type=EaS
+	export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+elif [ "$parse_branch" == "aware" ]; then
+	export kernel_type=EaS-LTO
+	export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+fi
 
 # Environment for Device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
-export config1=$(pwd)/arch/arm64/configs/"$config_device1"
 
 # Environment for Device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
-export config2=$(pwd)/arch/arm64/configs/"$config_device2"
 
 # Environment Vars
 export ARCH=arm64
-export kernel_type=EaS
 export TZ="Asia/Jakarta"
 export pack1=$(pwd)/zip1
 export pack2=$(pwd)/zip2
@@ -33,8 +37,21 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
+if [ "$parse_branch" == "aosp/eas-3.18" ]; then
+	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
+	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
+elif [ "$parse_branch" == "aware" ]; then
+    echo "processing..." # Download GCC 9.2-2019 arm32
+	wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
+    tar -xvf *.tar.xz
+    mv gcc-arm-9.2-2019* $(pwd)/gcc32
+    rm -rf *.tar.xz
+    echo "processing..." # Download GCC 9.2-2019 aarch64
+    wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
+    tar -xvf *.tar.xz
+    mv gcc-arm-9.2-2019* $(pwd)/gcc
+    rm -rf *.tar.xz
+fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -48,17 +65,26 @@ tg_channelcast() {
 		done
 	)"
 }
-tg_makegcc() {
-make -j$(nproc --all) O=out \
-                      ARCH=arm64 \
-                      CROSS_COMPILE=aarch64-linux-android- \
-                      CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
-}
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
 	-d sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE" \
 	-d chat_id="$TELEGRAM_ID"
 }
+if [ "$parse_branch" == "aware" ]; then
+    tg_makegcc () {
+        make -j$(nproc --all) O=out \
+                      ARCH=arm64 \
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+                      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+    }
+else
+    tg_makegcc () {
+        make -j$(nproc --all) O=out \
+                      ARCH=arm64 \
+                      CROSS_COMPILE=aarch64-linux-android- \
+                      CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+    }
+fi
 tg_sendinfo() {
     "$TELEGRAM" -c "784548477" -H \
 	"$(
