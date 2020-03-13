@@ -73,17 +73,17 @@ tg_sendstick() {
 }
 if [ "$parse_branch" == "aware" ]; then
     tg_makegcc () {
-        make -j$(nproc --all) O=out \
-                              ARCH=arm64 \
-                              CROSS_COMPILE=aarch64-none-elf- \
-                              CROSS_COMPILE_ARM32=arm-none-eabi- 2>&1| tee kernel.log
+        make -C $(pwd) -j$(nproc --all) O=out \
+                                        ARCH=arm64 \
+                                        CROSS_COMPILE=aarch64-none-elf- \
+                                        CROSS_COMPILE_ARM32=arm-none-eabi- 2>&1| tee kernel.log
     }
 else
     tg_makegcc () {
-        make -j$(nproc --all) O=out \
-                              ARCH=arm64 \
-                              CROSS_COMPILE=aarch64-linux-android- \
-                              CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+        make -C $(pwd) -j$(nproc --all) O=out \
+                                        ARCH=arm64 \
+                                        CROSS_COMPILE=aarch64-linux-android- \
+                                        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
     }
 fi
 tg_sendinfo() {
@@ -95,11 +95,11 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make O=out ARCH=arm64 "$config_device1"
+make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device1"
 tg_makegcc
 }
 tg_makedevice2() {
-make O=out ARCH=arm64 "$config_device2"
+make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device2"
 tg_makegcc
 }
 
