@@ -42,15 +42,12 @@ if [ "$parse_branch" == "aosp/eas-3.18" ]; then
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 elif [ "$parse_branch" == "aware" ]; then
     echo "processing..." # Download GCC 9.2-2019 arm32
-    wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
-    tar -xvf *.tar.xz
-    mv gcc-arm-9.2-2019* $(pwd)/gcc32
-    rm -rf *.tar.xz
+    wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
+    mv gcc-arm-9.2-2019.12-x86_64-arm-none-eabi $(pwd)/gcc32
     echo "processing..." # Download GCC 9.2-2019 aarch64
-    wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
-    tar -xvf *.tar.xz
-    mv gcc-arm-9.2-2019* $(pwd)/gcc
-    rm -rf *.tar.xz
+    wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
+    mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf $(pwd)/gcc
+    rm gcc*.tar.xz
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
