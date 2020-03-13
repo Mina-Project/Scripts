@@ -38,11 +38,11 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 if [ "$parse_branch" == "aosp/eas-3.18" ]; then
-	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
-	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 elif [ "$parse_branch" == "aware" ]; then
     echo "processing..." # Download GCC 9.2-2019 arm32
-	wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
+    wget -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
     tar -xvf *.tar.xz
     mv gcc-arm-9.2-2019* $(pwd)/gcc32
     rm -rf *.tar.xz
@@ -73,16 +73,16 @@ tg_sendstick() {
 if [ "$parse_branch" == "aware" ]; then
     tg_makegcc () {
         make -j$(nproc --all) O=out \
-                      ARCH=arm64 \
-                      CROSS_COMPILE=aarch64-linux-gnu- \
-                      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+                              ARCH=arm64 \
+                              CROSS_COMPILE=aarch64-linux-gnu- \
+                              CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
     }
 else
     tg_makegcc () {
         make -j$(nproc --all) O=out \
-                      ARCH=arm64 \
-                      CROSS_COMPILE=aarch64-linux-android- \
-                      CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+                              ARCH=arm64 \
+                              CROSS_COMPILE=aarch64-linux-android- \
+                              CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
     }
 fi
 tg_sendinfo() {
