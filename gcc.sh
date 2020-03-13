@@ -41,6 +41,7 @@ if [ "$parse_branch" == "aosp/eas-3.18" ]; then
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 elif [ "$parse_branch" == "aware" ]; then
+    mkdir gcc gcc32
     echo "processing..." # Download GCC 9.2-2019 arm32
     wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
     tar -xvf gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
@@ -49,10 +50,8 @@ elif [ "$parse_branch" == "aware" ]; then
     wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
     tar -xvf gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
     mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf/* gcc/
+    rm -rf *.tar.xz && rm -rf gcc-arm*
 fi
-rm -rf *.tar.xz
-ls -l $(pwd)/gcc/bin/
-ls -l $(pwd)/gcc32/bin/
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -96,10 +95,12 @@ tg_sendinfo() {
 }
 tg_makedevice1() {
 make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device1"
+PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
 tg_makegcc
 }
 tg_makedevice2() {
 make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device2"
+PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
 tg_makegcc
 }
 
