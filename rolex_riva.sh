@@ -36,17 +36,13 @@ export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
+export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-#if [ "$parse_branch" == "HMP-vdso32" ]; then
-#git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-#git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-#git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
-#else
-git clone --depth=1 https://github.com/baalajimaestro/aarch64-maestro-linux-android -b 07032020-9.2.1 gcc
-git clone --depth=1 https://github.com/baalajimaestro/arm-maestro-linux-gnueabi -b 07032020-9.2.1 gcc32
-#fi
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -82,33 +78,13 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make -s -C $(pwd) -j$(nproc --all) O=out "$config_device1"
-#if [ "$parse_branch" == "HMP-vdso32" ]; then
-make -C $(pwd) -j$(nproc --all) O=out 2>&1| tee kernel.log
-#else
-#tg_makeclang
-#fi
+make O=out ARCH=arm64 "$config_device1"
+tg_makeclang
 }
 tg_makedevice2() {
-make -s -C $(pwd) -j$(nproc --all) O=out "$config_device2"
-#if [ "$parse_branch" == "HMP-vdso32" ]; then
-make -C $(pwd) -j$(nproc --all) O=out 2>&1| tee kernel.log
-#else
-#tg_makeclang
-#fi
+make O=out ARCH=arm64 "$config_device2"
+tg_makeclang
 }
-
-#if [ "$parse_branch" == "HMP-vdso32" ]; then
-export CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-maestro-linux-gnu-
-export CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-maestro-linux-gnueabi-
-#else
-#export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-#fi
-
-chmod a+x $(pwd)/gcc/bin/*
-chmod a+x $(pwd)/gcc/libexec/gcc/aarch64-maestro-linux-gnu/9.2.1/*
-chmod a+x $(pwd)/gcc/bin/*
-chmod a+x $(pwd)/gcc/libexec/gcc/arm-maestro-linux-gnueabi/9.2.1/*
 
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
