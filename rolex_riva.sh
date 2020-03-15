@@ -39,7 +39,11 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-if [ "$parse_branch" == "HMP-vdso32" ]; then
+#if [ "$parse_branch" == "HMP-vdso32" ]; then
+#git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+#git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+#git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
+#else
 wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
 tar -xvf gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
 rm gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
@@ -48,11 +52,7 @@ wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.
 tar -xvf gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
 rm gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
 mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf $(pwd)/gcc
-else
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
-fi
+#fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -89,27 +89,27 @@ tg_sendinfo() {
 }
 tg_makedevice1() {
 make -s -C $(pwd) -j$(nproc --all) O=out "$config_device1"
-if [ "$parse_branch" == "HMP-vdso32" ]; then
+#if [ "$parse_branch" == "HMP-vdso32" ]; then
 make -C $(pwd) -j$(nproc --all) O=out 2>&1| tee kernel.log
-else
-tg_makeclang
-fi
+#else
+#tg_makeclang
+#fi
 }
 tg_makedevice2() {
 make -s -C $(pwd) -j$(nproc --all) O=out "$config_device2"
-if [ "$parse_branch" == "HMP-vdso32" ]; then
+#if [ "$parse_branch" == "HMP-vdso32" ]; then
 make -C $(pwd) -j$(nproc --all) O=out 2>&1| tee kernel.log
-else
-tg_makeclang
-fi
+#else
+#tg_makeclang
+#fi
 }
 
-if [ "$parse_branch" == "HMP-vdso32" ]; then
+#if [ "$parse_branch" == "HMP-vdso32" ]; then
 export CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-none-elf-
 export CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-none-eabi-
-else
-export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
+#else
+#export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+#fi
 
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
