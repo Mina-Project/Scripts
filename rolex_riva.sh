@@ -44,14 +44,8 @@ export TEMP=$(pwd)/TEMP
 #git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
 #git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
 #else
-wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz 
-tar -xvf gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
-rm gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
-mv gcc-arm-9.2-2019.12-x86_64-arm-none-eabi $(pwd)/gcc32
-wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
-tar -xvf gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
-rm gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz
-mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf $(pwd)/gcc
+git clone --depth=1 https://github.com/baalajimaestro/aarch64-maestro-linux-android -b 07032020-9.2.1 gcc
+git clone --depth=1 https://github.com/baalajimaestro/arm-maestro-linux-gnueabi -b 07032020-9.2.1 gcc32
 #fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
@@ -105,8 +99,8 @@ make -C $(pwd) -j$(nproc --all) O=out 2>&1| tee kernel.log
 }
 
 #if [ "$parse_branch" == "HMP-vdso32" ]; then
-export CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-none-elf-
-export CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-none-eabi-
+export CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-maestro-linux-gnu-
+export CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-maestro-linux-gnueabi-
 #else
 #export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 #fi
