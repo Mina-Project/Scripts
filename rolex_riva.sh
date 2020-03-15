@@ -105,6 +105,11 @@ export CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-maestro-linux-gnueabi-
 #export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 #fi
 
+chmod a+x $(pwd)/gcc/bin/*
+chmod a+x $(pwd)/gcc/libexec/gcc/aarch64-maestro-linux-gnu/9.2.1/*
+chmod a+x $(pwd)/gcc/bin/*
+chmod a+x $(pwd)/gcc/libexec/gcc/arm-maestro-linux-gnueabi/9.2.1/*
+
 # Time to compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1
