@@ -36,22 +36,13 @@ export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
-if [ "$kernel_type" == "Test-Build" ]; then
-    export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-else
-    export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
+export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-if [ "$kernel_type" == "Test-Build" ]; then
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-else
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-    git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
-fi
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
@@ -73,12 +64,6 @@ make -j$(nproc) O=out \
 		CROSS_COMPILE=aarch64-linux-android- \
 		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 }
-tg_makegcc() {
-make -j$(nproc) O=out \
-		ARCH=arm64 \
-		CROSS_COMPILE=aarch64-linux-android- \
-		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
-}
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
 	-d sticker="$sticker" \
@@ -94,19 +79,11 @@ tg_sendinfo() {
 }
 tg_makedevice1() {
 make O=out ARCH=arm64 "$config_device1"
-if [ "$kernel_type" == "Test-Build" ]; then
-    tg_makegcc
-else
-    tg_makeclang
-fi
+tg_makeclang
 }
 tg_makedevice2() {
 make O=out ARCH=arm64 "$config_device2"
-if [ "$kernel_type" == "Test-Build" ]; then
-    tg_makegcc
-else
-    tg_makeclang
-fi
+tg_makeclang
 }
 
 # Time to compile Device 1
