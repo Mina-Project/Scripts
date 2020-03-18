@@ -24,7 +24,7 @@ if [[ $parse_branch == "vince" ]]; then
 elif [[ $parse_branch == "lavender" ]]; then
      git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
      git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
-     git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6207600 clang
+     git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
 fi
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
