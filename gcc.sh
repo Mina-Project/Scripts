@@ -4,13 +4,7 @@
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-if [ "$parse_branch" == "aosp/eas-3.18" ]; then
-	export kernel_type=EaS
-	export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-elif [ "$parse_branch" == "aware" ]; then
-	export kernel_type=EaS-LTO
-	export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-fi
+export kernel_type=EaS
 
 # Environment for Device 1
 export codename_device1=rolex
@@ -31,26 +25,23 @@ export product_name=GREENFORCE
 export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$CIRCLE_SHA1
 export KBUILD_BUILD_USER=github.com.fadlyas07
-export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
+if [ "$parse_branch" == "clang/EAS" ]; then
+    export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+else
+    export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+fi
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-if [ "$parse_branch" == "aosp/eas-3.18" ]; then
+if [ "$parse_branch" == "clang/EAS" ]; then
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
-elif [ "$parse_branch" == "aware" ]; then
-    mkdir gcc gcc32
-    echo "processing..." # Download GCC 9.2-2019 arm32
-    wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
-    tar -xvf gcc-arm-9.2-2019.12-x86_64-arm-none-eabi.tar.xz
-    mv gcc-arm-9.2-2019.12-x86_64-arm-none-eabi/* gcc32/
-    echo "processing..." # Download GCC 9.2-2019 aarch64
-    wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
-    tar -xvf gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz 
-    mv gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf/* gcc/
-    rm -rf *.tar.xz && rm -rf gcc-arm*
+    git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
+else
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r40 gcc
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r40 gcc32
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
@@ -70,15 +61,18 @@ tg_sendstick() {
 	-d sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE" \
 	-d chat_id="$TELEGRAM_ID"
 }
-if [ "$parse_branch" == "aware" ]; then
-    tg_makegcc () {
-        make -C $(pwd) -j$(nproc --all) O=out \
-                                        ARCH=arm64 \
-                                        CROSS_COMPILE=aarch64-none-elf- \
-                                        CROSS_COMPILE_ARM32=arm-none-eabi- 2>&1| tee kernel.log
+if [ "$parse_branch" == "clang/EAS" ]; then
+    tg_makekernel () {
+        make -j$(nproc) O=out \
+		        ARCH=arm64 \
+		        CC=clang \
+		        CLANG_TRIPLE=aarch64-linux-gnu- \
+		        CROSS_COMPILE=aarch64-linux-android- \
+		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
+}
     }
 else
-    tg_makegcc () {
+    tg_makekernel () {
         make -C $(pwd) -j$(nproc --all) O=out \
                                         ARCH=arm64 \
                                         CROSS_COMPILE=aarch64-linux-android- \
@@ -94,14 +88,12 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device1"
-PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
-tg_makegcc
+make O=out ARCH=arm64 "$config_device1"
+tg_makekernel
 }
 tg_makedevice2() {
-make -s -C $(pwd) -j$(nproc --all) ARCH=arm64 O=out "$config_device2"
-PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
-tg_makegcc
+make O=out ARCH=arm64 "$config_device2"
+tg_makekernel
 }
 
 # Time to compile Device 1
