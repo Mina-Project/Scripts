@@ -127,5 +127,12 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Branch :</b> <code>$parse_branch</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
-curl -F document=@$(echo $pack1/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-curl -F document=@$(echo $pack2/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+# Make changelog first before upload kernel
+mkdir -p .zip/rolex && mkdir -p .zip/riva
+mv $pack1/*.zip ~/.zip/rolex && mv $pack2/*.zip ~/.zip/riva
+rm -rf * # bjir we need to clean all the source cos the source is only can read SHA1
+git clone -q -j48 https://github.com/fadlyas07/android-kern-xiaomi-msm8917 --depth=1 kernel
+cd kernel && git log -n5 >> changelog.log
+curl -F document=@$(echo kernel/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+curl -F document=@$(echo .zip/rolex/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+curl -F document=@$(echo .zip/riva/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
