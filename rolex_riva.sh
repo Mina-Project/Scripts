@@ -62,7 +62,7 @@ make -j$(nproc) O=out \
 		CC=clang \
 		CLANG_TRIPLE=aarch64-linux-gnu- \
 		CROSS_COMPILE=aarch64-linux-android- \
-		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
