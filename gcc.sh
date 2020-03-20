@@ -21,6 +21,28 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export type=$(cat $(pwd)/arch/arch64/configs/"$config_device1" || "$config_device2")
 
+# Device 1
+export codename_device1=rolex
+export config_device1=rolex_defconfig
+
+# Device 2
+export codename_device2=riva
+export config_device2=riva_defconfig
+
+if [[ $type =~ "HMP" ]]; then
+  export kernel_type=Hmp
+  export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
+elif [[ $type =~ "EAS" ]]; then
+  export kernel_type=EaS
+  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+elif [[ $type =~ "CAF" ]]; then
+  export kernel_type="PuRe-CaF"
+  export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
+elif [ ! $kernel_type ]; then
+  export kernel_type="Test-Build"
+  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+fi
+
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 echo "cloning..."
@@ -71,14 +93,6 @@ make -j$(nproc) O=out \
 		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
 }
 
-# Device 1
-export codename_device1=rolex
-export config_device1=rolex_defconfig
-
-# Device 2
-export codename_device2=riva
-export config_device2=riva_defconfig
-
 # Compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1
@@ -111,20 +125,6 @@ mv $kernel_img $pack2/zImage
 cd $pack2
 zip -r9q $product_name-$codename_device2-$kernel_type-$date2.zip * -x .git README.md LICENCE
 cd ..
-
-if [[ $type =~ "HMP" ]]; then
-  export kernel_type=Hmp
-  export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
-elif [[ $type =~ "EAS" ]]; then
-  export kernel_type=EaS
-  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-elif [[ $type =~ "CAF" ]]; then
-  export kernel_type="PuRe-CaF"
-  export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
-elif [ ! $kernel_type ]; then
-  export kernel_type="Test-Build"
-  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-fi
 
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
