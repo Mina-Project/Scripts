@@ -3,31 +3,6 @@
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
-export type=$(cat $(pwd)/*.txt) # do this to determine kernel type
-if [ "$type" == "Heterogen-Multi Processing" ]; then
-   export kernel_type=Hmp
-   export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
-elif [ "$type" == "Energy Aware Scheduling" ]; then
-   export kernel_type=EaS
-   export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-elif [ "$type" == "Energy Aware Scheduling" ]; then
-   export kernel_type=EaS
-   export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-elif [ "$type" == "Code Aurora Forum" ]; then
-   export kernel_type="PuRe-CaF"
-   export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
-elif [ ! -f "$type" ]; then
-   export kernel_type=Test-Build
-   export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
-fi
-
-# Environment for Device 1
-export codename_device1=rolex
-export config_device1=rolex_defconfig
-
-# Environment for Device 2
-export codename_device2=riva
-export config_device2=riva_defconfig
 
 # Environment Vars
 export ARCH=arm64
@@ -44,17 +19,20 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+export type=$(cat $(pwd)/arch/arch64/configs/"$config_device1" || "$config_device2")
 
-mkdir $(pwd)/TEMP # this is the place for build.log later
+mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
+echo "cloning..."
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
 git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
 git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
+echo "done"
 
-TELEGRAM=telegram/telegram # path for telegram.sh
+TELEGRAM=telegram/telegram
 tg_channelcast() {
     "$TELEGRAM" -c "$TELEGRAM_ID" -H \
 	"$(
@@ -93,6 +71,14 @@ make -j$(nproc) O=out \
 		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
 }
 
+# Device 1
+export codename_device1=rolex
+export config_device1=rolex_defconfig
+
+# Device 2
+export codename_device2=riva
+export config_device2=riva_defconfig
+
 # Compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1
@@ -125,6 +111,20 @@ mv $kernel_img $pack2/zImage
 cd $pack2
 zip -r9q $product_name-$codename_device2-$kernel_type-$date2.zip * -x .git README.md LICENCE
 cd ..
+
+if [[ $type =~ "HMP" ]]; then
+  export kernel_type=Hmp
+  export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
+elif [[ $type =~ "EAS" ]]; then
+  export kernel_type=EaS
+  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+elif [[ $type =~ "CAF" ]]; then
+  export kernel_type="PuRe-CaF"
+  export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
+elif [ ! $kernel_type ]; then
+  export kernel_type="Test-Build"
+  export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
+fi
 
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
