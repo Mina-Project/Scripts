@@ -47,12 +47,12 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 mkdir $(pwd)/TEMP # this is the place for build.log later
 export TEMP=$(pwd)/TEMP
 if [ ! -f "$type" ]; then
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 $(pwd)/gcc
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 $(pwd)/gcc32
+   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 gcc
+   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 gcc32
 else
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 $(pwd)/gcc
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 $(pwd)/gcc32
-   git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 $(pwd)/clang
+   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 gcc
+   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 gcc32
+   git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
 fi
    git clone --depth=1 https://github.com/fabianonline/telegram.sh $(pwd)/telegram
    git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip1
