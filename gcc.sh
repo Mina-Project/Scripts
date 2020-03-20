@@ -54,7 +54,7 @@ else
    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 $(pwd)/gcc32
    git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 $(pwd)/clang
 fi
-   git clone --depth=1 https://github.com/fabianonline/telegram.sh $(pwd)/elegram
+   git clone --depth=1 https://github.com/fabianonline/telegram.sh $(pwd)/telegram
    git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip1
    git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip2
 
