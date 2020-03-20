@@ -16,7 +16,7 @@ elif [ "$type" == "Energy Aware Scheduling" ]; then
 elif [ "$type" == "Code Aurora Forum" ]; then
    export kernel_type="PuRe-CaF"
    export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
-elif [ ! "$type" ]; then
+elif [ ! -f "$type" ]; then
    export kernel_type=Test-Build
    export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
 fi
@@ -46,7 +46,7 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
 mkdir $(pwd)/TEMP # this is the place for build.log later
 export TEMP=$(pwd)/TEMP
-elif [ ! "$type" ]; then
+if [ ! -f "$type" ]; then
    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 $(pwd)/gcc
    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 $(pwd)/gcc32
 else
