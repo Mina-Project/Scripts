@@ -5,8 +5,8 @@
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 export type=$(cat $(pwd)/version.txt) # do this to determine kernel type
 if [ "$type" == "Heterogen-Multi Processing" ]; then
-	export kernel_type=Hmp
-	export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
+   export kernel_type=Hmp
+   export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
 elif [ "$type" == "Energy Aware Scheduling" ]; then
    export kernel_type=EaS
    export sticker="CAADBQADIwEAAn1Cwy5pf2It72fNXBYE"
@@ -96,7 +96,7 @@ if [ "$kernel_type" == "Test-Build" ]; then
 		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
     }
 else
-    make -j$(nproc) O=out \
+        make -j$(nproc) O=out \
 		        ARCH=arm64 \
 		        CC=clang \
 		        CLANG_TRIPLE=aarch64-linux-gnu- \
