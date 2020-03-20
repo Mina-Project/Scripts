@@ -43,20 +43,16 @@ export KBUILD_BUILD_USER=Mhmmdfadlyas
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
+export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 
 mkdir $(pwd)/TEMP # this is the place for build.log later
 export TEMP=$(pwd)/TEMP
-if [ ! -f "$type" ]; then
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 gcc
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 gcc32
-else
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 gcc
-   git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r54 gcc32
-   git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
-fi
-   git clone --depth=1 https://github.com/fabianonline/telegram.sh $(pwd)/telegram
-   git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip1
-   git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip2
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
+git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip1
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3 zip2
 
 TELEGRAM=telegram/telegram # path for telegram.sh
 tg_channelcast() {
@@ -88,29 +84,14 @@ tg_makedevice2() {
 make O=out ARCH=arm64 "$config_device2"
 tg_build
 }
-if [ "$kernel_type" == "Test-Build" ]; then
-    tg_build () { # For GCC 4.9.x only
-        make -j$(nproc) O=out \
-		        ARCH=arm64 \
-		        CROSS_COMPILE=aarch64-linux-android- \
-		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
-    }
-else
-    tg_build () { # For All Clang with GCC 4.9.x (except clang + binutils | LLVM )
-        make -j$(nproc) O=out \
-		        ARCH=arm64 \
-		        CC=clang \
-		        CLANG_TRIPLE=aarch64-linux-gnu- \
-		        CROSS_COMPILE=aarch64-linux-android- \
-		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
-    }
-fi
-
-if [ "$kernel_type" == "Test-Build" ]; then
-    export PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-else
-    export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
+tg_build () {
+make -j$(nproc) O=out \
+	        ARCH=arm64 \
+	        CC=clang \
+	        CLANG_TRIPLE=aarch64-linux-gnu- \
+		CROSS_COMPILE=aarch64-linux-android- \
+		CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
+}
 
 # Compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
