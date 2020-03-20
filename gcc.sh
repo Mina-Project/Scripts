@@ -44,7 +44,7 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
-mkdir $(pwd)/TEMP
+mkdir $(pwd)/TEMP # this is the place for build.log later
 export TEMP=$(pwd)/TEMP
 elif [ ! "$type" ]; then
    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r54 $(pwd)/gcc
@@ -58,7 +58,7 @@ fi
    git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip1
    git clone --depth=1 https://github.com/fadlyas07/anykernel-3 $(pwd)/zip2
 
-TELEGRAM=telegram/telegram
+TELEGRAM=telegram/telegram # path for telegram.sh
 tg_channelcast() {
     "$TELEGRAM" -c "$TELEGRAM_ID" -H \
 	"$(
@@ -69,7 +69,7 @@ tg_channelcast() {
 }
 tg_makedevice1() {
 make O=out ARCH=arm64 "$config_device1"
-tg_makekernel
+tg_build
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -86,16 +86,17 @@ tg_sendinfo() {
 }
 tg_makedevice2() {
 make O=out ARCH=arm64 "$config_device2"
-tg_makeclang
+tg_build
 }
 if [ "$kernel_type" == "Test-Build" ]; then
-    tg_makekernel () {
+    tg_build () { # For GCC 4.9.x only
         make -j$(nproc) O=out \
 		        ARCH=arm64 \
 		        CROSS_COMPILE=aarch64-linux-android- \
 		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee build.log
     }
 else
+    tg_build () { # For All Clang with GCC 4.9.x (except clang + binutils | LLVM )
         make -j$(nproc) O=out \
 		        ARCH=arm64 \
 		        CC=clang \
@@ -111,7 +112,7 @@ else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
 
-# Time to compile Device 1
+# Compile Device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1
 mv *.log $TEMP
@@ -126,10 +127,10 @@ cd $pack1
 zip -r9q $product_name-$codename_device1-$kernel_type-$date1.zip * -x .git README.md LICENCE
 cd ..
 
-# clean out & log before compile again
+# clean up output & log
 rm -rf out/ $TEMP/*.log
 
-# Time to compile Device 2
+# Compile Device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice2
 mv *.log $TEMP
