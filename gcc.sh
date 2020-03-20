@@ -3,7 +3,7 @@
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
-export type=$(cat $(pwd)/version.txt) # do this to determine kernel type
+export type=$(cat $(pwd)/*.txt) # do this to determine kernel type
 if [ "$type" == "Heterogen-Multi Processing" ]; then
    export kernel_type=Hmp
    export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
