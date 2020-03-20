@@ -19,7 +19,6 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-export type=$(cat $(pwd)/arch/arch64/configs/"$config_device1" || "$config_device2")
 
 # Device 1
 export codename_device1=rolex
@@ -29,6 +28,7 @@ export config_device1=rolex_defconfig
 export codename_device2=riva
 export config_device2=riva_defconfig
 
+export type=$(cat $(pwd)/arch/arch64/configs/"$config_device1" || "$config_device2")
 if [[ $type =~ "HMP" ]]; then
   export kernel_type=Hmp
   export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
