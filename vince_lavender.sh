@@ -37,8 +37,8 @@ export TELEGRAM_ID=$chat_id
 export pack=$(pwd)/anykernel3
 export TELEGRAM_TOKEN=$token
 export product_name=GREENFORCE
-export KBUILD_BUILD_HOST=$CIRCLE_SHA1
-export KBUILD_BUILD_USER=github.com.fadlyas07
+export KBUILD_BUILD_HOST=$(whoami)
+export KBUILD_BUILD_USER=Mhmmdfadlyas
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
@@ -50,6 +50,22 @@ tg_channelcast() {
 			echo "$POST"
 		done
 	)"
+}
+tg_build_clang() {
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+}
+tg_build_proton() {
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-gnu- \
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
 }
 tg_sendinfo() {
     "$TELEGRAM" -c "784548477" -H \
@@ -73,23 +89,13 @@ fi
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device"
 if [[ $parse_branch == "vince" ]]; then 
-make -j$(nproc) O=out \
-                ARCH=arm64 \
-                CC=clang \
-                CLANG_TRIPLE=aarch64-linux-gnu- \
-                CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+    tg_build_proton
 elif [[ $parse_branch == "lavender" ]]; then
-make -j$(nproc) O=out \
-                ARCH=arm64 \
-                CC=clang \
-                CLANG_TRIPLE=aarch64-linux-gnu- \
-                CROSS_COMPILE=aarch64-linux-android- \
-                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+    tg_build_clang
 fi
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
-        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
+    curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 	tg_sendinfo "$product_name $device Build Failed!!"
 	exit 1
 else
@@ -97,8 +103,22 @@ else
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 cd $pack
-zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
+if [[ $parse_branch == "vince" ]]; then 
+    zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
+elif [[ $parse_branch == "lavender" ]]; then
+    zip -r9q $product_name-$codename_device-new-blob-$date.zip * -x .git README.md LICENCE
+fi
 cd ..
+
+if [[ $parse_branch == "lavender" ]]; then 
+      rm -rf out/* $TEMP/*.log $pack/zImage
+      git revert https://github.com/fadlyas07/android-kernel-xiaomi-lavender/commit/4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
+      tg_build_clang
+      curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
+      mv $kernel_img $pack/zImage
+      cd ${pack} && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
+fi
+
 kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
@@ -108,4 +128,9 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Kernel Version :</b> Linux <code>$kernel_ver</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
-curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+if [[ $parse_branch == "vince" ]]; then 
+    curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+elif [[ $parse_branch == "lavender" ]]; then
+    curl -F document=@$product_name-$codename_device-old-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+    curl -F document=@$product_name-$codename_device-new-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+fi
