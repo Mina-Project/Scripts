@@ -84,7 +84,7 @@ if [[ $parse_branch == "vince" ]]; then
       export PATH=$(pwd)/clang/proton/bin:$PATH
       export LD_LIBRARY_PATH=$(pwd)/clang/proton/lib:$LD_LIBRARY_PATH
 elif [[ $parse_branch == "lavender" ]]; then
-       export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device"
@@ -111,12 +111,12 @@ fi
 cd ..
 
 if [[ $parse_branch == "lavender" ]]; then 
-      rm -rf out/* $TEMP/*.log $pack/zImage
-      git revert https://github.com/fadlyas07/android-kernel-xiaomi-lavender/commit/4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
-      tg_build_clang
-      curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
-      mv $kernel_img $pack/zImage
-      cd ${pack} && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
+    rm -rf out/* $TEMP/*.log $pack/zImage
+    git revert https://github.com/fadlyas07/android-kernel-xiaomi-lavender/commit/4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
+    tg_build_clang
+    curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
+    mv $kernel_img $pack/zImage
+    cd $pack && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
 fi
 
 kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
