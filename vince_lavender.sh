@@ -132,6 +132,6 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 if [[ $parse_branch == "vince" ]]; then 
     curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 elif [[ $parse_branch == "lavender" ]]; then
-    curl -F document=@$product_name-$codename_device-old-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-    curl -F document=@$product_name-$codename_device-new-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+    curl -F document=@$pack/$product_name-$codename_device-old-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+    curl -F document=@$pack/product_name-$codename_device-new-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 fi
