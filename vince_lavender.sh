@@ -118,6 +118,7 @@ if [[ $parse_branch == "lavender" ]]; then
     mv $kernel_img $pack/zImage
     cd $pack && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
 fi
+cd ..
 
 kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
