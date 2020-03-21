@@ -114,6 +114,7 @@ if [[ $parse_branch == "lavender" ]]; then
     rm -rf out/* $TEMP/*.log $pack/zImage
     git revert https://github.com/fadlyas07/android-kernel-xiaomi-lavender/commit/4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
     tg_build_clang
+    mv *.log
     curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
     mv $kernel_img $pack/zImage
     cd $pack && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
