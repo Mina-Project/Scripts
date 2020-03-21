@@ -7,7 +7,7 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$parse_branch" == "HMP-vdso32" ]; then
 	export kernel_type=Hmp
 	export sticker="CAADBQADeQEAAn1Cwy71MK7Ir5t0PhYE"
-elif [ "$parse_branch" =~ aosp ]; then
+elif [ "$parse_branch" == "aosp/android-3.18" ]; then
 	export kernel_type=PuRe-CaF
 	export sticker="CAADBQADfAEAAn1Cwy6aGpFrL8EcbRYE"
 elif [ ! "$kernel_type" ]; then
