@@ -35,11 +35,13 @@ export KBUILD_BUILD_HOST=$(whoami)
 export KBUILD_BUILD_USER=Mhmmdfadlyas
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
-export PATH=$(pwd)/clang/bin:$PATH
+export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
+git clone --depth=1 https://github.com/Haseo97/aarch64-elf-gcc gcc
+git clone --depth=1 https://github.com/baalajimaestro/arm-maestro-linux-gnueabi -b 07032020-9.2.1 gcc32
 git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 clang
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
@@ -58,8 +60,8 @@ make -C "$(pwd)" -j"$(nproc)" O=out \
 		              ARCH=arm64 \
 		              CC=clang \
 		              CLANG_TRIPLE=aarch64-linux-gnu- \
-		              CROSS_COMPILE=aarch64-linux-gnu- \
-		              CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee build.log
+		              CROSS_COMPILE=aarch64-elf- \
+		              CROSS_COMPILE_ARM32=arm-maestro-linux-gnueabi- 2>&1| tee build.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
