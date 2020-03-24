@@ -54,12 +54,12 @@ tg_channelcast() {
 	)"
 }
 tg_makeclang() {
-make -C -j$(nproc) O=out \
-		   ARCH=arm64 \
-		   CC=clang \
-		   CLANG_TRIPLE=aarch64-linux-gnu- \
-		   CROSS_COMPILE=aarch64-linux-gnu- \
-		   CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee build.log
+make -C "$(pwd)" -j"$(nproc)" O=out \
+		              ARCH=arm64 \
+		              CC=clang \
+		              CLANG_TRIPLE=aarch64-linux-gnu- \
+		              CROSS_COMPILE=aarch64-linux-gnu- \
+		              CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee build.log
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -75,11 +75,11 @@ tg_sendinfo() {
 	)"
 }
 tg_makedevice1() {
-make -s -C O=out ARCH=arm64 "$config_device1"
+make -s -C "$(pwd)" -j"$(nproc)" O=out "$config_device1"
 tg_makeclang
 }
 tg_makedevice2() {
-make -s -C O=out ARCH=arm64 "$config_device2"
+make -s -C "$(pwd)" -j"$(nproc)" O=out "$config_device2"
 tg_makeclang
 }
 
