@@ -17,15 +17,9 @@ elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; th
      exit 1
 fi
 mkdir $(pwd)/TEMP
-if [[ $parse_branch == "vince" ]]; then
-     mkdir -p clang/proton
-     wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst
-     tar -I zstd -xvf *.tar.zst -C clang/proton --strip-components=1
-elif [[ $parse_branch == "lavender" ]]; then
-     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
-     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
-     git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
-fi
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
+git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
@@ -80,19 +74,10 @@ tg_sendstick() {
 	-d sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE" \
 	-d chat_id="$TELEGRAM_ID"
 }
-if [[ $parse_branch == "vince" ]]; then 
-      export PATH=$(pwd)/clang/proton/bin:$PATH
-      export LD_LIBRARY_PATH=$(pwd)/clang/proton/lib:$LD_LIBRARY_PATH
-elif [[ $parse_branch == "lavender" ]]; then
-      export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-fi
+export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device"
-if [[ $parse_branch == "vince" ]]; then 
-    tg_build_proton
-elif [[ $parse_branch == "lavender" ]]; then
-    tg_build_clang
-fi
+tg_build_clang
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
     curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
@@ -118,8 +103,10 @@ if [[ $parse_branch == "lavender" ]]; then
     curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
     mv $kernel_img $pack/zImage
     cd $pack && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
+    cd ..
+else
+    echo "hmmzz"
 fi
-cd ..
 
 kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
