@@ -35,7 +35,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
 elif [ $parse_branch == "aosp/clang-lto" ]; then
-    git clone --depth=1 git clone https://bitbucket.org/xanaxdroid/dragontc-10.0.git clang
+    git clone --depth=1 https://bitbucket.org/xanaxdroid/dragontc-10.0.git clang
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
 else
