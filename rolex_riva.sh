@@ -122,7 +122,7 @@ if [[ ! -f "$kernel_img" ]]; then
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 mv $kernel_img $pack/zImage
-cd $pack && zip -r9q $product_name-$codename_device2-$kernel_type-$date2.zip * -x .git README.md LICENCE $(echo *.zip)
+cd $pack && zip -r9q $product_name-$codename_device2-$date2.zip * -x .git README.md LICENCE $(echo *.zip)
 cd ..
 
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
