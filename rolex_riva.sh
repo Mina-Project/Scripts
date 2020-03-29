@@ -71,6 +71,7 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
       make -j$(nproc) O=out \
 		      ARCH=arm64 \
 		      CC=clang \
+                      CLANG_TRIPLE=aarch64-linux-gnu- \
 		      CROSS_COMPILE=aarch64-linux-gnu- \
                       CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     }
