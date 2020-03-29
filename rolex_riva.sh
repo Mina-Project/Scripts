@@ -18,22 +18,22 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 if [ $parse_branch == "aosp/gcc-lto" ]; then
-	export GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
-	export GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
+    export GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
+    export GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
 else
-	export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+    export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 if [ $parse_branch == "aosp/gcc-lto" ]; then
-	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
-	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
-	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
+    git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
+    git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
+    git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
 else
-	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
-	git clone --depth=1 https://github.com/crdroidmod/android_prebuilts_clang_host_linux-x86_clang-5900059 clang
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
+    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+    git clone --depth=1 https://github.com/crdroidmod/android_prebuilts_clang_host_linux-x86_clang-5900059 clang
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
@@ -56,21 +56,22 @@ tg_channelcast() {
 	)"
 }
 if [ $parse_branch == "aosp/gcc-lto" ]; then
-tg_build() {
-make -j$(nproc) O=out \
-                ARCH=arm64 \
-                CROSS_COMPILE="$GCC" \
-                CROSS_COMPILE_ARM32="$GCC32"
-}
+    tg_build() {
+      make -j$(nproc) O=out \
+                      ARCH=arm64 \
+                      CROSS_COMPILE="$GCC" \
+                      CROSS_COMPILE_ARM32="$GCC32"
+    }
 else
-tg_build() {
-make -j$(nproc) O=out \
-		ARCH=arm64 \
-		CC=clang \
-		CLANG_TRIPLE=aarch64-linux-gnu- \
-		CROSS_COMPILE=aarch64-linux-android- \
-		CROSS_COMPILE_ARM32=arm-linux-androideabi-
-}
+    tg_build() {
+      make -j$(nproc) O=out \
+		      ARCH=arm64 \
+		      CC=clang \
+		      CLANG_TRIPLE=aarch64-linux-gnu- \
+		      CROSS_COMPILE=aarch64-linux-android- \
+		      CROSS_COMPILE_ARM32=arm-linux-androideabi-
+    }
+fi
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
 	-d sticker="CAACAgUAAxkBAAEYl9pee0jBz-DdWSsy7Rik8lwWE6LARwACmQEAAn1Cwy4FwzpKLPPhXRgE" \
