@@ -17,7 +17,7 @@ export KBUILD_BUILD_HOST=Mhmmdfadlyas
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
-if [ $parse_branch == "LA.UM.8.6.r1/gcc-lto" ]; then
+if [ $parse_branch == "aosp/gcc-lto" ]; then
 	export GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 	export GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
 else
@@ -26,7 +26,7 @@ fi
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
-if [ $parse_branch == "LA.UM.8.6.r1/gcc-lto" ]; then
+if [ $parse_branch == "aosp/gcc-lto" ]; then
 	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
 	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
 	git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
@@ -55,7 +55,7 @@ tg_channelcast() {
 		done
 	)"
 }
-if [ $parse_branch == "LA.UM.8.6.r1/gcc-lto" ]; then
+if [ $parse_branch == "aosp/gcc-lto" ]; then
 tg_build() {
 make -j$(nproc) O=out \
                 ARCH=arm64 \
