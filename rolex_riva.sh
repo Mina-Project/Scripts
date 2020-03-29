@@ -69,12 +69,12 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     }
 elif [ $parse_branch == "aosp/clang-lto" ]; then
     tg_build() {
-      make -j$(nproc) O=out \
-		      ARCH=arm64 \
-		      CC=clang \
-                      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE=aarch64-linux-gnu- \
-                      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+      make clean -j$(nproc) O=out \
+		            ARCH=arm64 \
+		            CC=clang \
+                            CLANG_TRIPLE=aarch64-linux-gnu- \
+		            CROSS_COMPILE=aarch64-linux-gnu- \
+                            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     }
     tg_build() {
       make -j$(nproc) O=out \
