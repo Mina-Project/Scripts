@@ -25,6 +25,7 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
 else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
+export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
