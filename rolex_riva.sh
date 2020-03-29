@@ -42,7 +42,7 @@ mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
 git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
 git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
-git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
+git clone --depth=1 https://github.com/fadlyas07/anykernel-3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
 TELEGRAM=telegram/telegram
