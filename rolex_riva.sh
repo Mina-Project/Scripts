@@ -25,7 +25,6 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
 else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
-export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
@@ -72,9 +71,7 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
       make -j$(nproc) O=out \
 		      ARCH=arm64 \
 		      CC=clang \
-		      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE=aarch64-linux-gnu- \
-		      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+		      CROSS_COMPILE=aarch64-linux-gnu-
     }
 else
     tg_build() {
