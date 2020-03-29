@@ -34,7 +34,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
 elif [ $parse_branch == "aosp/clang-lto" ]; then
-    git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 clang
+    git clone --depth=1 https://github.com/NusantaraDevs/clang/ -b dev/11.0 clang
 else
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
