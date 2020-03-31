@@ -22,6 +22,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     export GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
 elif [ $parse_branch == "aosp/clang-lto" ]; then
     export PATH=$(pwd)/clang/bin:$PATH
+    export GCC="$(pwd)/gcc/bin/aarch64-elf-"
 else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
@@ -32,6 +33,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
 elif [ $parse_branch == "aosp/clang-lto" ]; then
+    git clone --depth=1 https://github.com/Haseo97/aarch64-elf-gcc gcc
     git clone --depth=1 https://github.com/kdrag0n/proton-clang clang
 else
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
@@ -71,7 +73,7 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
 		      ARCH=arm64 \
 		      CC=clang \
 		      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE=aarch64-linux-gnu- \
+		      CROSS_COMPILE="${GCC}" \
 		      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     }
 else
