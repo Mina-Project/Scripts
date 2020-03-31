@@ -23,6 +23,8 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
 elif [ $parse_branch == "aosp/clang-lto" ]; then
     export PATH=$(pwd)/clang/bin:$PATH
     export GCC="$(pwd)/gcc/bin/aarch64-elf-"
+    export clang="$(pwd)/clang/bin/clang"
+    export GCC32="$(pwd)/clang/bin/arm-linux-gnueabi-"
 else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
@@ -71,10 +73,10 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
     tg_build() {
       make -j$(nproc) O=out \
 		      ARCH=arm64 \
-		      CC=clang \
+		      CC="$clang" \
 		      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE="${GCC}" \
-		      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+		      CROSS_COMPILE="$GCC" \
+		      CROSS_COMPILE_ARM32="$GCC32"
     }
 else
     tg_build() {
