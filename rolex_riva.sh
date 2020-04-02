@@ -21,12 +21,11 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     export GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
     export GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
 elif [ $parse_branch == "aosp/clang-lto" ]; then
-    export GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
-    export clang="$(pwd)/clang/bin/clang"
-    export GCC32="$(pwd)/clang/bin/arm-linux-gnueabi-"
+    export PATH=$(pwd)/clang/bin:$PATH
 else
     export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 fi
+export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
 mkdir $(pwd)/TEMP
 export TEMP=$(pwd)/TEMP
@@ -34,9 +33,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm gcc32
     git clone --depth=1 https://github.com/chips-project/priv-toolchains -b non-elf/gcc-9.2.0/arm64 gcc
 elif [ $parse_branch == "aosp/clang-lto" ]; then
-    git clone --depth=1 https://github.com/NusantaraDevs/DragonTC clang
-    git clone --depth=1 https://github.com/baalajimaestro/aarch64-maestro-linux-android -b 09062019-9.1.1 gcc
-    git clone --depth=1 https://github.com/baalajimaestro/arm-maestro-linux-gnueabi -b master gcc32
+    git clone --depth=1 https://github.com/NusantaraDevs/clang clang
 else
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
     git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
@@ -73,10 +70,10 @@ elif [ $parse_branch == "aosp/clang-lto" ]; then
     tg_build() {
       make -j$(nproc) O=out \
 		      ARCH=arm64 \
-		      CC="$clang" \
+		      CC=clang \
 		      CLANG_TRIPLE=aarch64-linux-gnu- \
-		      CROSS_COMPILE="$GCC" \
-		      CROSS_COMPILE_ARM32="$GCC32"
+		      CROSS_COMPILE=aarch64-linux-gnu- \
+		      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     }
 else
     tg_build() {
