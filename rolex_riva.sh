@@ -20,10 +20,8 @@ export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 if [ $parse_branch == "aosp/gcc-lto" ]; then
     export GCC="$(pwd)/gcc/bin/aarch64-elf-"
     export GCC32="$(pwd)/gcc32/bin/arm-eabi-"
-elif [ $parse_branch == "aosp/clang-lto" ]; then
-    export PATH=$(pwd)/clang/bin:$PATH
 else
-    export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
+    export PATH=$(pwd)/clang/bin:$PATH
 fi
 export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
@@ -35,8 +33,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
 elif [ $parse_branch == "aosp/clang-lto" ]; then
     git clone --depth=1 https://github.com/NusantaraDevs/clang clang
 else
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r36 gcc
-    git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r36 gcc32
+    git clone --depth=1 https://github.com/HANA-CI-Build-Project/proton-clang clang
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
@@ -65,21 +62,14 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
                       CROSS_COMPILE="$GCC" \
                       CROSS_COMPILE_ARM32="$GCC32"
     }
-elif [ $parse_branch == "aosp/clang-lto" ]; then
+else
     tg_build() {
       make -j$(nproc) O=out \
 		      ARCH=arm64 \
 		      CC=clang \
 		      CLANG_TRIPLE=aarch64-linux-gnu- \
 		      CROSS_COMPILE=aarch64-linux-gnu- \
-		      CROSS_COMPILE_ARM32=arm-linux-androideabi-
-    }
-else
-    tg_build() {
-      make -j$(nproc) O=out \
-		      ARCH=arm64 \
-		      CROSS_COMPILE=aarch64-linux-android- \
-		      CROSS_COMPILE_ARM32=arm-linux-androideabi-
+		      CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     }
 fi
 tg_sendstick() {
