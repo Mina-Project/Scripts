@@ -17,9 +17,7 @@ elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; th
      exit 1
 fi
 mkdir $(pwd)/TEMP
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r50 gcc
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r50 gcc32
-git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6284175 clang
+git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
@@ -45,15 +43,7 @@ tg_channelcast() {
 		done
 	)"
 }
-tg_build_clang() {
-make -j$(nproc) O=out \
-                ARCH=arm64 \
-                CC=clang \
-                CLANG_TRIPLE=aarch64-linux-gnu- \
-                CROSS_COMPILE=aarch64-linux-android- \
-                CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
-}
-tg_build_proton() {
+tg_build() {
 make -j$(nproc) O=out \
                 ARCH=arm64 \
                 CC=clang \
@@ -77,10 +67,10 @@ tg_sendstick() {
 export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make O=out ARCH=arm64 "$config_device"
-tg_build_clang
+tg_build
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
-    curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
+        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 	tg_sendinfo "$product_name $device Build Failed!!"
 	exit 1
 else
@@ -98,7 +88,7 @@ cd ..
 if [[ $parse_branch == "lavender" ]]; then 
     rm -rf out/* $TEMP/*.log $pack/zImage
     git revert https://github.com/fadlyas07/android-kernel-xiaomi-lavender/commit/4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
-    tg_build_clang
+    tg_build
     mv *.log
     curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
     mv $kernel_img $pack/zImage
