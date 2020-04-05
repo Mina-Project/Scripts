@@ -1,3 +1,4 @@
+# Build Started
 #!/usr/bin/env bash
 # Circle CI/CD - Simple kernel build script
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
@@ -23,26 +24,23 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
 else
     export PATH=$(pwd)/clang/bin:$PATH
 fi
-export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
-mkdir $(pwd)/TEMP
+mkdir $(pwd)/TEMP # Temporary directory for build.log
 export TEMP=$(pwd)/TEMP
 if [ $parse_branch == "aosp/gcc-lto" ]; then
-    git clone --depth=1 https://github.com/arter97/arm64-gcc -b master gcc
-    git clone --depth=1 https://github.com/arter97/arm32-gcc -b master gcc32
-elif [ $parse_branch == "aosp/clang-lto" ]; then
-    git clone --depth=1 https://github.com/NusantaraDevs/clang clang
+    git clone --depth=1 https://github.com/arter97/arm64-gcc -b master gcc # Aarch64 GCC 9.3.0
+    git clone --depth=1 https://github.com/arter97/arm32-gcc -b master gcc32 # Arm32 GCC 9.3.0
 else
-    git clone --depth=1 https://github.com/HANA-CI-Build-Project/proton-clang clang
+    git clone --depth=1 https://github.com/kdrag0n/proton-clang -b master clang # Proton Clang 11.0
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
 
-# Device 1
+# Export codename & defconfig device 1
 export codename_device1=rolex
 export config_device1=rolex_defconfig
 
-# Device 2
+# Export codename & defconfig device 2
 export codename_device2=riva
 export config_device2=riva_defconfig
 
@@ -97,7 +95,7 @@ tg_build
 # Compile device 1
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice1 2>&1| tee build.log
-mv *.log $TEMP
+mv *.log $TEMP # => Move build.log to $TEMP directory
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 	tg_sendinfo "$product_name Build Failed!"
@@ -105,16 +103,16 @@ if [[ ! -f "$kernel_img" ]]; then
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 mv $kernel_img $pack/zImage
-cd $pack && zip -r9q $product_name-$codename_device1-$date1.zip * -x .git README.md LICENCE
-cd ..
+cd $pack && zip -r9q $product_name-$codename_device1-$date1.zip * -x .git README.md LICENCE $(echo *.zip)
+cd .. # Back to /home/*/
 
-# * clean out, log, & zImage *
+# ** clean out, log, & zImage **
 rm -rf out/ $TEMP/*.log $pack/zImage
 
 # Compile device 2
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 tg_makedevice2 2>&1| tee build.log
-mv *.log $TEMP
+mv *.log $TEMP # => Move build.log to $TEMP directory
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 	tg_sendinfo "$product_name Build Failed!"
@@ -123,7 +121,7 @@ fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 mv $kernel_img $pack/zImage
 cd $pack && zip -r9q $product_name-$codename_device2-$date2.zip * -x .git README.md LICENCE $(echo *.zip)
-cd ..
+cd .. # Back to /home/*/
 
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
@@ -134,3 +132,4 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
 curl -F document=@$(echo $pack/$product_name-$codename_device1-$date1.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-$codename_device2-$date2.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
+# Build complete.
