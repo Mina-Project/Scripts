@@ -30,9 +30,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/arter97/arm64-gcc -b master gcc # Aarch64 GCC 9.3.0
     git clone --depth=1 https://github.com/arter97/arm32-gcc -b master gcc32 # Arm32 GCC 9.3.0
 else
-    mkdir -p clang
-    wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst # Proton Clang 11.0
-    tar -I zstd -xvf *.tar.zst -C $(pwd)/clang --strip-components=1 && rm -rf $(echo "*.tar.zst")
+    git clone --depth=1 https://github.com/kdrag0n/proton-clang -b master clang # Proton Clang 11.0
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
