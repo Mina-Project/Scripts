@@ -1,4 +1,3 @@
-# Build Started
 #!/usr/bin/env bash
 # Circle CI/CD - Simple kernel build script
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
@@ -31,7 +30,9 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
     git clone --depth=1 https://github.com/arter97/arm64-gcc -b master gcc # Aarch64 GCC 9.3.0
     git clone --depth=1 https://github.com/arter97/arm32-gcc -b master gcc32 # Arm32 GCC 9.3.0
 else
-    git clone --depth=1 https://github.com/kdrag0n/proton-clang -b master clang # Proton Clang 11.0
+    mkdir -p clang
+    wget https://kdrag0n.dev/files/redirector/proton_clang-latest.tar.zst # Proton Clang 11.0
+    tar -I zstd -xvf *.tar.zst -C $(pwd)/clang --strip-components=1 && rm -rf $(echo "*.tar.zst")
 fi
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 https://github.com/fadlyas07/anykernel-3
@@ -132,4 +133,3 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
 curl -F document=@$(echo $pack/$product_name-$codename_device1-$date1.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-$codename_device2-$date2.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-# Build complete.
