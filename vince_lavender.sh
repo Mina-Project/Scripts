@@ -28,7 +28,7 @@ git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
 TELEGRAM=telegram/telegram
 tg_channelcast() {
-    "$TELEGRAM" -c "$TELEGRAM_ID" -H \
+    "${TELEGRAM}" -c "$TELEGRAM_ID" -H \
 	"$(
 		for POST in "$@"; do
 			echo "$POST"
@@ -44,7 +44,7 @@ make -j$(nproc) O=out \
                 CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
 }
 tg_sendinfo() {
-    "$TELEGRAM" -c "680900214" -H \
+    "${TELEGRAM}" -c "680900214" -H \
 	"$(
 		for POST in "$@"; do
 			echo "$POST"
