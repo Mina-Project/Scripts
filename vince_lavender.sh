@@ -3,6 +3,8 @@
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
+# Copyright (C) 2020 ToniStark | 미나 (@MoveAngel)
+
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ $parse_branch == "vince" ]]; then
      export device="Xiaomi Redmi 5 Plus"
@@ -18,19 +20,19 @@ elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; th
 fi
 mkdir $(pwd)/temp
 git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
-git clone --depth=1 https://github.com/fadlyas07/anykernel-3 anykernel3
+git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 anykernel3
 git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
 # Environtment Vars
 export ARCH=arm64
 export TEMP=$(pwd)/temp
-export TELEGRAM_ID=$chat_id
+export TELEGRAM_ID="-1001323983226"
 export pack=$(pwd)/anykernel3
-export TELEGRAM_TOKEN=$token
-export product_name=GREENFORCE
+export TELEGRAM_TOKEN="MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw=="
+export product_name=Mina-미나
 export PATH=$(pwd)/clang/bin:$PATH
 export KBUILD_BUILD_HOST=$(whoami)
-export KBUILD_BUILD_USER=Mhmmdfadlyas
+export KBUILD_BUILD_USER=MoveAngel
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
 
@@ -52,7 +54,7 @@ make -j$(nproc) O=out \
                 CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
 }
 tg_sendinfo() {
-    "$TELEGRAM" -c "784548477" -H \
+    "$TELEGRAM" -c "680900214" -H \
 	"$(
 		for POST in "$@"; do
 			echo "$POST"
@@ -61,7 +63,7 @@ tg_sendinfo() {
 }
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
-	-d sticker="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE" \
+	-d sticker="CAACAgUAAx0CTSOkewABAUFiXpUfjOjsAAEfQNmvRyD-YvTLM8f7AAIjAQACdraVKKbzsP1n4T8kGAQ" \
 	-d chat_id="$TELEGRAM_ID"
 }
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')

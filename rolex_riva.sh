@@ -3,16 +3,17 @@
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
+# Copyright (C) 2020 ToniStark | 미나 (@MoveAngel)
 
 export ARCH=arm64
 build_start=$(date +"%s")
-export TELEGRAM_ID=$chat_id
-export TELEGRAM_TOKEN=$token
+export TELEGRAM_ID="-1001323983226"
+export TELEGRAM_TOKEN="MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw=="
 export pack=$(pwd)/anykernel-3
-export product_name=GreenForce
+export product_name=Mina-미나
 export device="Xiaomi Redmi 4A/5A"
 export KBUILD_BUILD_HOST=$(whoami)
-export KBUILD_BUILD_USER=Mhmmdfadlyas
+export KBUILD_BUILD_USER=MoveAngel
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export KBUILD_COMPILER_STRING=$($(pwd)/clang/bin/clang --version | head -n 1 | perl -pe 's/\((?:http|git).*?\)//gs' | sed -e 's/ */ /g' -e 's/[[:space:]]*$//' -e 's/^.*clang/clang/')
@@ -27,16 +28,16 @@ else
     git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc
 fi
 git clone --depth=1 --single-branch https://github.com/fabianonline/telegram.sh telegram
-git clone --depth=1 --single-branch https://github.com/fadlyas07/anykernel-3
+git clone --depth=1 --single-branch https://github.com/Mina-Project/AnyKernel3
 
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
-	-d sticker="CAACAgUAAxkBAAEYl9pee0jBz-DdWSsy7Rik8lwWE6LARwACmQEAAn1Cwy4FwzpKLPPhXRgE" \
+	-d sticker="CAACAgUAAx0CTSOkewABAUFiXpUfjOjsAAEfQNmvRyD-YvTLM8f7AAIjAQACdraVKKbzsP1n4T8kGAQ" \
 	-d chat_id="$TELEGRAM_ID"
 }
 TELEGRAM=telegram/telegram
 tg_sendinfo() {
-    "$TELEGRAM" -c "784548477" -H \
+    "$TELEGRAM" -c "680900214" -H \
 	"$(
 		for POST in "$@"; do
 			echo "$POST"
