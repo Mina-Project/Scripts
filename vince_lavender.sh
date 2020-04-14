@@ -5,21 +5,6 @@
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
 # Copyright (C) 2020 ToniStark | 미나 (@MoveAngel)
 
-export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-if [[ $parse_branch == "lavender" ]]; then
-     export device="Xiaomi Redmi Note 7/7S"
-     export codename_device=lavender
-     export config_device=lavender-perf_defconfig
-elif [[ ! $parse_branch == "lavender" ]]; then
-     echo "please set the name of kernel branch as above"
-     exit 1
-fi
-mkdir $(pwd)/temp
-git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
-git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 anykernel3
-git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
-
-# Environtment Vars
 export ARCH=arm64
 export TEMP=$(pwd)/temp
 export TELEGRAM_ID="-1001323983226"
@@ -27,10 +12,19 @@ export pack=$(pwd)/anykernel3
 export TELEGRAM_TOKEN="MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw=="
 export product_name=Mina-미나
 export PATH=$(pwd)/clang/bin:$PATH
+export device="Xiaomi Redmi Note 7/7S"
+export codename_device=lavender
+export config_device=lavender-perf_defconfig
 export KBUILD_BUILD_HOST=$(whoami)
 export KBUILD_BUILD_USER=MoveAngel
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 export commit_point=$(git log --pretty=format:'%h: %s (%an)' -1)
+export parse_branch=$(git rev-parse --abbrev-ref HEAD)
+
+mkdir $(pwd)/temp
+git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
+git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 anykernel3
+git clone --depth=1 https://github.com/fabianonline/telegram.sh telegram
 
 TELEGRAM=telegram/telegram
 tg_channelcast() {
@@ -67,29 +61,15 @@ make O=out ARCH=arm64 "$config_device"
 tg_build
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
-        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
+        curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
 	tg_sendinfo "$product_name $device Build Failed!!"
 	exit 1
 else
         mv $kernel_img $pack/zImage
 fi
-curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
-cd $pack
-if [[ $parse_branch == "lavender" ]]; then
-    zip -r9q $product_name-$codename_device-new-blob-$date.zip * -x .git README.md LICENCE
-fi
+curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
+cd $pack && zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE $(echo *.zip)
 cd ..
-
-if [[ $parse_branch == "lavender" ]]; then
-    rm -rf out $TEMP/*.log $pack/zImage
-    make O=out ARCH=arm64 "$config_device"
-    tg_build
-    mv *.log $TEMP
-    curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
-    mv $kernel_img $pack/zImage
-    cd $pack && zip -r9q $product_name-$codename_device-old-blob-$date.zip * -x .git README.md LICENCE $(echo *.zip)
-    cd ..
-fi
 
 kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
@@ -100,7 +80,4 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Kernel Version :</b> Linux <code>$kernel_ver</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
-if [[ $parse_branch == "lavender" ]]; then
-    curl -F document=@$pack/$product_name-$codename_device-old-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-    curl -F document=@$pack/$product_name-$codename_device-new-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-fi
+curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
