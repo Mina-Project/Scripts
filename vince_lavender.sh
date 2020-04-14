@@ -6,15 +6,11 @@
 # Copyright (C) 2020 ToniStark | 미나 (@MoveAngel)
 
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
-if [[ $parse_branch == "vince" ]]; then
-     export device="Xiaomi Redmi 5 Plus"
-     export codename_device=vince
-     export config_device=vince-perf_defconfig
-elif [[ $parse_branch == "lavender" ]]; then
+if [[ $parse_branch == "lavender" ]]; then
      export device="Xiaomi Redmi Note 7/7S"
      export codename_device=lavender
      export config_device=lavender-perf_defconfig
-elif [[ ! $parse_branch == "vince" ]] && [[ ! $parse_branch == "lavender" ]]; then
+elif [[ ! $parse_branch == "lavender" ]]; then
      echo "please set the name of kernel branch as above"
      exit 1
 fi
@@ -79,16 +75,13 @@ else
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="784548477"
 cd $pack
-if [[ $parse_branch == "vince" ]]; then 
-    zip -r9q $product_name-$codename_device-$date.zip * -x .git README.md LICENCE
-elif [[ $parse_branch == "lavender" ]]; then
+if [[ $parse_branch == "lavender" ]]; then
     zip -r9q $product_name-$codename_device-new-blob-$date.zip * -x .git README.md LICENCE
 fi
 cd ..
 
 if [[ $parse_branch == "lavender" ]]; then
     rm -rf out $TEMP/*.log $pack/zImage
-    git revert 4ab2eb2bd6389b776de2cf5a94e8c1eb96251e09 --no-commit
     make O=out ARCH=arm64 "$config_device"
     tg_build
     mv *.log $TEMP
@@ -107,9 +100,7 @@ tg_channelcast "<b>$product_name new build is available</b>!" \
 		"<b>Kernel Version :</b> Linux <code>$kernel_ver</code>" \
 		"<b>Toolchain :</b> <code>$toolchain_ver</code>" \
 		"<b>Latest commit :</b> <code>$commit_point</code>"
-if [[ $parse_branch == "vince" ]]; then 
-    curl -F document=@$(echo $pack/*.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
-elif [[ $parse_branch == "lavender" ]]; then
+if [[ $parse_branch == "lavender" ]]; then
     curl -F document=@$pack/$product_name-$codename_device-old-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
     curl -F document=@$pack/$product_name-$codename_device-new-blob-$date.zip "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 fi
