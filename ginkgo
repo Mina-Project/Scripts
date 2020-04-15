@@ -52,13 +52,12 @@ tg_channelcast() {
 	)"
 }
     tg_build() {
-      PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
       make -j$(nproc --all) O=out \
 		            ARCH=arm64 \
-		            CC=clang \
+		            CC=$(pwd)/clang/bin/clang \
 		            CLANG_TRIPLE=aarch64-linux-gnu- \
-		            CROSS_COMPILE=aarch64-linux-android- \
-		            CROSS_COMPILE_ARM32=arm-linux-androideabi-
+		            CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-linux-android- \
+		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-gnueabi--
     }
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
