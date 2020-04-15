@@ -61,7 +61,7 @@ tg_channelcast() {
     }
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-make ARCH=arm64 O=out ginkgo-perf_defconfig && \
+make ARCH=arm64 O=out vendor/ginkgo-perf_defconfig && \
 tg_build 2>&1| tee build_kernel.log
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
@@ -79,7 +79,7 @@ cd ..
 rm -rf out/ $TEMP/* $pack/zImage
 
 date2=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-make ARCH=arm64 O=out willow_defconfig && \
+make ARCH=arm64 O=out vendor/willow_defconfig && \
 tg_build 2>&1| tee build_kernel.log
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
