@@ -56,7 +56,8 @@ tg_channelcast() {
                 CC=clang \
                 CLANG_TRIPLE=aarch64-linux-gnu- \
                 CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                LLVM="llvm-" 2>&1| tee kernel.log
     }
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
