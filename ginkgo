@@ -6,7 +6,6 @@
 # Copyright (C) 2020 ToniStark | 미나 (@MoveAngel)
 
 export ARCH=arm64
-build_start=$(date +"%s")
 export TELEGRAM_ID="-1001323983226"
 export TELEGRAM_TOKEN="MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw=="
 export pack=$(pwd)/AnyKernel
@@ -18,47 +17,34 @@ export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 
 mkdir $(pwd)/temp && export TEMP=$(pwd)/temp
-    git clone --depth=1 --single-branch https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6364210 clang
-	git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32
-    git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
-    git clone --depth=1 --single-branch https://github.com/fabianonline/telegram.sh telegram
-    git clone --depth=1 --single-branch https://github.com/Mina-Project/AnyKernel3 -b master AnyKernel
+git clone --depth=1 --single-branch https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6364210 clang
+git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32
+git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
+git clone --depth=1 --single-branch https://github.com/fabianonline/telegram.sh telegram
+git clone --depth=1 --single-branch https://github.com/Mina-Project/AnyKernel3 -b master AnyKernel
 
-tg_sendstick() {
-   curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
-	-d sticker="CAACAgUAAx0CUPRqKwACFWRellg9L_iFa20dCci4wyL0Pr2xKgACJQEAAna2lSii1C6TeMVizRgE" \
-	-d chat_id="$TELEGRAM_ID"
+finerr() {
+	curl -s "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+		-d "parse_mode=markdown" \
+		-d text="Build throw an error(s)" \
+		-d chat_id="680900214" \
+		-d "disable_web_page_preview=true"
+	exit 1
 }
-tg_sendstickerfail() {
-   curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
-	-d sticker="CAACAgQAAx0CUPRqKwACFWBellgcUeTWUj_MRWJLz6Czd9cokwACUwwAAskpHQ8go8px5eh4ihgE" \
-	-d chat_id="$TELEGRAM_ID"
+stiker() {
+	curl -s -F chat_id=$TELEGRAM_ID -F sticker="CAACAgUAAx0CUPRqKwACFWRellg9L_iFa20dCci4wyL0Pr2xKgACJQEAAna2lSii1C6TeMVizRgE" https://api.telegram.org/bot$token/sendSticker
 }
-TELEGRAM=telegram/telegram
-tg_sendinfo() {
-    "$TELEGRAM" -c "680900214" -H \
-	"$(
-		for POST in "$@"; do
-			echo "$POST"
-		done
-	)"
+stikerr() {
+	curl -s -F chat_id=$TELEGRAM_ID -F sticker="CAACAgQAAx0CUPRqKwACFWBellgcUeTWUj_MRWJLz6Czd9cokwACUwwAAskpHQ8go8px5eh4ihgE" https://api.telegram.org/bot$token/sendSticker
 }
-tg_channelcast() {
-    "$TELEGRAM" -c "$TELEGRAM_ID" -H \
-	"$(
-		for POST in "$@"; do
-			echo "$POST"
-		done
-	)"
-}
-    tg_build() {
+tg_build() {
       make -j$(nproc --all) O=out \
 		            ARCH=arm64 \
 		            CC=$(pwd)/clang/bin/clang \
 		            CLANG_TRIPLE=aarch64-linux-gnu- \
 		            CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-linux-android- \
-		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-gnueabi--
-    }
+		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-androideabi-
+}
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make ARCH=arm64 O=out vendor/ginkgo-perf_defconfig && \
@@ -66,8 +52,8 @@ tg_build 2>&1| tee build_kernel.log
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
-	tg_sendinfo "$product_name Build throw an error(s)!"
-    tg_sendstickerfail
+	finerr
+	stikerr
 	exit 1
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
@@ -84,18 +70,24 @@ tg_build 2>&1| tee build_kernel.log
 mv *.log $TEMP
 if [[ ! -f "$kernel_img" ]]; then
 	curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
-	tg_sendinfo "$product_name Build throw an error(s)!"
-    tg_sendstickerfail
+	finerr
+	stikerr
 	exit 1
 fi
 curl -F document=@$(echo $TEMP/*.log) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="680900214"
 mv $kernel_img $pack/zImage
 cd $pack && zip -r9q $product_name-willow-$date2.zip * -x .git README.md LICENCE $(echo *.zip)
 cd ..
-build_end=$(date +"%s")
-build_diff=$(($build_end - $build_start))
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
-tg_sendstick
-tg_channelcast "<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Ginkgo/Willow</b> (Redmi Note 8/T AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
+kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
+stiker
+curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d text="
+<b>$product_name new build is available</b>!
+Started on <code>Circle CI</code>
+For device: <code>$device</code>
+Linux Version: <code>Linux $kernel_ver</code>
+Compiler <code>$toolchain_ver</code>
+Under commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>"
+"  -d chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-ginkgo-$date1.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-willow-$date2.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
