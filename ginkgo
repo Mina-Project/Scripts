@@ -6,7 +6,7 @@ git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 -b master AnyKern
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
 chat_id="-1001323983226"
-codename_device=Whyred
+codename_device=Ginkgo
 PATH=$(pwd)/clang/bin:$PATH
 curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Whyred</b> (Redmi Note 5/Pro AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
