@@ -95,6 +95,6 @@ build_end=$(date +"%s")
 build_diff=$(($build_end - $build_start))
 toolchain_ver=$(cat $(pwd)/out/include/generated/compile.h | grep LINUX_COMPILER | cut -d '"' -f2)
 tg_sendstick
-tg_channelcast "<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Whyred</b> (Redmi Note 5/Pro AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
+tg_channelcast "<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Ginkgo/Willow</b> (Redmi Note 8/T AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
 curl -F document=@$(echo $pack/$product_name-ginkgo-$date1.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-willow-$date2.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
