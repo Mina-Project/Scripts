@@ -43,7 +43,7 @@ tg_build() {
 		            CC=$(pwd)/clang/bin/clang \
 		            CLANG_TRIPLE=aarch64-linux-gnu- \
 		            CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-linux-android- \
-		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-gnueabi--
+		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-androideabi-
 }
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
