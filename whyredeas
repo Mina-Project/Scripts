@@ -1,0 +1,69 @@
+#!bin/bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+echo "Cloning Toolchain, and AnyKernel"
+git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
+git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 -b master AnyKernel
+echo "Done"
+token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
+chat_id="-1001323983226"
+codename_device=Whyred
+PATH=$(pwd)/clang/bin:$PATH
+curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Whyred</b> (Redmi Note 5/Pro AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
+tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+START=$(date +"%s")
+export ARCH=arm64
+export KBUILD_BUILD_USER=MoveAngel
+export KBUILD_BUILD_HOST=CircleCI
+# Push kernel to channel
+function push() {
+	ZIP=$(echo Mina-미나*.zip)
+	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+}
+
+function paste() {
+    curl -F document=build.log "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" 
+}
+# Stiker
+function stiker() {
+	curl -s -F chat_id=$chat_id -F sticker="CAACAgUAAx0CUPRqKwACFWRellg9L_iFa20dCci4wyL0Pr2xKgACJQEAAna2lSii1C6TeMVizRgE" https://api.telegram.org/bot$token/sendSticker
+	}
+# Stiker Error
+function stikerr() {
+	curl -s -F chat_id=$chat_id -F sticker="CAACAgQAAx0CUPRqKwACFWBellgcUeTWUj_MRWJLz6Czd9cokwACUwwAAskpHQ8go8px5eh4ihgE" https://api.telegram.org/bot$token/sendSticker
+	}
+# Fin Error
+function finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+			-d chat_id="$chat_id" \
+			-d "disable_web_page_preview=true" \
+			-d "parse_mode=markdown" \
+			-d text="Build throw an error(s)"
+}
+make ARCH=arm64 O=out whyred_defconfig && \
+make -j$(nproc) O=out \
+                ARCH=arm64 \
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-gnu- \
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+if ! [ -a $IMAGE ]; then
+	finerr
+	stikerr
+	exit 1
+fi
+cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+paste
+cd AnyKernel
+zip -r9 Mina-미나-Kernel-$codename_device-${tanggal}.zip *
+END=$(date +"%s")
+DIFF=$(($END - $START))
+push
+stiker
