@@ -43,7 +43,7 @@ tg_build() {
 		            CC=$(pwd)/clang/bin/clang \
 		            CLANG_TRIPLE=aarch64-linux-gnu- \
 		            CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-linux-android- \
-		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-androideabi-
+		            CROSS_COMPILE_ARM32=$(pwd)/gcc32/bin/arm-linux-gnueabi--
 }
 
 date1=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
@@ -87,7 +87,7 @@ Started on <code>Circle CI</code>
 For device: <code>$device</code>
 Linux Version: <code>Linux $kernel_ver</code>
 Compiler <code>$toolchain_ver</code>
-Under commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>"
+Under commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>
 "  -d chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-ginkgo-$date1.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
 curl -F document=@$(echo $pack/$product_name-willow-$date2.zip) "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" -F chat_id="$TELEGRAM_ID"
