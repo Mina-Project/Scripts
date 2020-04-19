@@ -54,6 +54,7 @@ make -j$(nproc) O=out \
                 CLANG_TRIPLE=aarch64-linux-gnu- \
                 CROSS_COMPILE=aarch64-linux-gnu- \
                 CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 if ! [ -a $IMAGE ]; then
 	finerr
 	stikerr
@@ -61,7 +62,6 @@ if ! [ -a $IMAGE ]; then
 fi
 cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
 paste
-kernel_ver=$(cat $(pwd)/out/.config | grep Linux/arm64 | cut -d " " -f3)
 cd AnyKernel
 zip -r9 Mina-미나-Kernel-$codename_device-${tanggal}.zip *
 END=$(date +"%s")
