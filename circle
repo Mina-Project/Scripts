@@ -8,7 +8,7 @@ token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5Z
 chat_id="-1001323983226"
 codename_device=Lavender
 PATH=$(pwd)/clang/bin:$PATH
-curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Lavender</b> (Redmi Note 7/7S AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
+curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> New build is UP"'!'"%0A<b>Started on :</b> <code>CircleCI</code>%0A<b>For device :</b> <b>Lavender</b> (Redmi Note 7/7S AOSP)%0A<b>Kernel Version :</b> <code>$(make kernelversion)</code>%0A<b>Branch :</b> <code>$(git rev-parse --abbrev-ref HEAD)</code>%0A<b>Under commit :</b> <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0A<b>Compiler :</b> <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0A<b>Started on :</b> <code>$(TZ=Asia/Jakarta date)</code>%0A"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 START=$(date +"%s")
 export ARCH=arm64
