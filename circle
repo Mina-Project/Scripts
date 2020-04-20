@@ -1,7 +1,8 @@
 #!bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Cloning Toolchain, and AnyKernel"
-git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
+git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32 
+git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
 git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 -b master AnyKernel
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
@@ -50,10 +51,8 @@ function finerr() {
 make ARCH=arm64 O=out lavender-perf_defconfig && \
 make -j$(nproc) O=out \
                 ARCH=arm64 \
-                CC=clang \
-                CLANG_TRIPLE=aarch64-linux-gnu- \
-                CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
+                CROSS_COMPILE=aarch64-linux-android- \
+		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
 if ! [ -a $IMAGE ]; then
 	finerr
 	stikerr
