@@ -1,15 +1,14 @@
 #!bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Cloning Toolchain, and AnyKernel"
-git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32 
-git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
+git clone --depth=1 https://github.com/Haseo97/Avalon-Clang-11.0.1 -b 11.0.1 clang
 git clone --depth=1 https://github.com/Mina-Project/AnyKernel3 -b master AnyKernel
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
 chat_id="-1001323983226"
 codename_device=Lavender
-PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH
-curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> New build is UP"'!'"%0A<b>Started on :</b> <code>CircleCI</code>%0A<b>For device :</b> <b>Lavender</b> (Redmi Note 7/7S AOSP)%0A<b>Kernel Version :</b> <code>$(make kernelversion)</code>%0A<b>Branch :</b> <code>$(git rev-parse --abbrev-ref HEAD)</code>%0A<b>Under commit :</b> <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0A<b>Compiler :</b> <code>$($(pwd)/gcc/bin/gcc --version | head -n 1)</code>%0A<b>Started on :</b> <code>$(TZ=Asia/Jakarta date)</code>%0A"
+PATH=$(pwd)/clang/bin:$PATH
+curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>Mina 미나 Kernel</b> New build is UP"'!'"%0A<b>Started on :</b> <code>CircleCI</code>%0A<b>For device :</b> <b>Lavender</b> (Redmi Note 7/7S AOSP)%0A<b>Kernel Version :</b> <code>$(make kernelversion)</code>%0A<b>Branch :</b> <code>$(git rev-parse --abbrev-ref HEAD)</code>%0A<b>Under commit :</b> <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0A<b>Compiler :</b> <code>$($(pwd)/clang/bin/clang --version | head -n 1)</code>%0A<b>Started on :</b> <code>$(TZ=Asia/Jakarta date)</code>%0A"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 START=$(date +"%s")
 export ARCH=arm64
@@ -51,8 +50,10 @@ function finerr() {
 make ARCH=arm64 O=out lavender-perf_defconfig && \
 make -j$(nproc) O=out \
                 ARCH=arm64 \
-                CROSS_COMPILE=aarch64-linux-android- \
-		        CROSS_COMPILE_ARM32=arm-linux-androideabi- 2>&1| tee kernel.log
+                CC=clang \
+                CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=aarch64-linux-gnu- \
+                CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1| tee kernel.log
 if ! [ -a $IMAGE ]; then
 	finerr
 	stikerr
