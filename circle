@@ -16,7 +16,7 @@ export KBUILD_BUILD_USER=MoveAngel
 export KBUILD_BUILD_HOST=CircleCI
 # Push kernel to channel
 function push() {
-	ZIP=$(echo Mina-미나*.zip)
+	ZIP=$(echo Mina-Kernel*.zip)
 	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
 			-F "disable_web_page_preview=true" \
@@ -62,7 +62,7 @@ fi
 cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
 paste
 cd AnyKernel
-zip -r9 Mina-미나-Kernel-$codename_device-${tanggal}.zip *
+zip -r9 Mina-Kernel-$codename_device-OldCam${tanggal}.zip *
 END=$(date +"%s")
 DIFF=$(($END - $START))
 push
