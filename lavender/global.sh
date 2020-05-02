@@ -217,16 +217,16 @@ function compile_clang() {
 }
 
 function send_start {
-	sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
-		"<b>Device:</b> ${DEVICES} or ${PHONE}" \
-		"<b>Name:</b> <code>${KERNEL_NAME}-${KVERSION}</code>" \
-		"<b>Kernel Version:</b> <code>$(make kernelversion)</code>" \
-		"<b>Type:</b> <code>${KERNEL_TYPE}</code>" \
-		"<b>Branch:</b> <code>$(git branch --show-current)</code>" \
-		"<b>Commit:</b> <code>$(git log --pretty=format:'%h : %s' -1)</code>" \
- 		"<b>Started on:</b> <code>$(hostname)</code>" \
-		"<b>Compiler:</b> <code>${TOOL_VERSION}</code>" \
-		"<b>Started at</b> <code>$DATE</code>"
+	sendInfo "<b> ${KERNEL_NAME} New Build is UP! </b>" \
+		"<b>Device :</b> ${DEVICES} or ${PHONE}" \
+		"<b>Name :</b> <code>${KERNEL_NAME}-${KVERSION}</code>" \
+		"<b>Kernel Version :</b> <code>$(make kernelversion)</code>" \
+		"<b>Type :</b> <code>${KERNEL_TYPE}</code>" \
+		"<b>Branch :</b> <code>$(git branch --show-current)</code>" \
+		"<b>Commit :</b> <code>$(git log --pretty=format:'%h : %s' -1)</code>" \
+ 		"<b>Started on :</b> <code>$(hostname)</code>" \
+		"<b>Compiler :</b> <code>${TOOL_VERSION}</code>" \
+		"<b>Started at :</b> <code>$DATE</code>"
 }
 
 BUILD_START=$(date +"%s")
