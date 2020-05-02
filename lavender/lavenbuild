@@ -3,7 +3,7 @@ echo "Cloning dependencies"
 git clone --depth=1 https://github.com/stormbreaker-project/stormbreaker-clang clang
 git clone --depth=1 https://github.com/KudProject/arm-linux-androideabi-4.9 gcc32
 git clone --depth=1 https://github.com/KudProject/aarch64-linux-android-4.9 gcc
-git clone https://github.com/sohamxda7/Anykernel3.git -b stormbreaker --depth=1 AnyKernel
+git clone https://github.com/Mina-Project/Anykernel3.git -b master --depth=1 AnyKernel
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
 chat_id="-1001323983226"
