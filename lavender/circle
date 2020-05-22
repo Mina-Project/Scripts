@@ -6,7 +6,7 @@ git clone -j32 --depth=1 https://android.googlesource.com/platform/prebuilts/gcc
 git clone -j32 --depth=1 https://github.com/HANA-CI-Build-Project/proton-clang -b proton-clang-11 clang
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
-chat_id="-1001323983226"
+chat_id="-1001265004530"
 GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 START=$(date +"%s")
