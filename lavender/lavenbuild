@@ -1,12 +1,12 @@
 #!/bin/bash
 echo "Cloning dependencies"
-git clone --depth=1 https://github.com/stormbreaker-project/stormbreaker-clang clang
+git clone --depth=1 https://github.com/HANA-CI-Build-Project/proton-clang -b proton-clang-11 clang
 git clone --depth=1 https://github.com/KudProject/arm-linux-androideabi-4.9 gcc32
 git clone --depth=1 https://github.com/KudProject/aarch64-linux-android-4.9 gcc
-git clone https://github.com/Mina-Project/Anykernel3.git -b master --depth=1 AnyKernel
+git clone https://github.com/Mina-Project/Anykernel3.git -b master AnyKernel
 echo "Done"
 token=$(openssl enc -base64 -d <<< MTI5MDc5MjQxNDpBQUY4QWJQVWc4QkpQcG5rVjhLTUV5ZW5FNnlZeW1od0ljZw==)
-chat_id="-1001323983226"
+chat_id="-1001265004530"
 KERNEL_DIR=$(pwd)
 IMAGE="${KERNEL_DIR}/out/arch/arm64/boot/Image.gz-dtb"
 TANGGAL=$(date +"%Y%m%d-%H")
@@ -28,7 +28,7 @@ function sendinfo() {
         -d chat_id="$chat_id" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
-        -d text="<b>Mina 미나 Kernel</b> New build is UP"'!'"%0A<b>Started on :</b> <code>DroneCI</code>%0A<b>For device :</b> <b>Lavender</b> (Redmi Note 7/7S AOSP)%0A<b>Kernel Version :</b> <code>$(make kernelversion)</code>%0A<b>Branch :</b> <code>${BRANCH}</code>%0A<b>Commit Point :</b> <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0A<b>Using Compiler :</b> <code>${KBUILD_COMPILER_STRING}</code>%0A<b>Started on :</b> <code>$(TZ=Asia/Jakarta date)</code>%0A"
+        -d text="<b>Mina 미나 Kernel</b> New build is UP"'!'"%0A<b>Started on :</b> <code>DroneCI</code>%0A<b>For device :</b> <b>Lavender</b> (Redmi Note 7/7S AOSP)%0A<b>Kernel Version :</b> <code>$(make kernelversion)</code>%0A<b>Branch :</b> <code>${BRANCH}</code>%0A<b>Commit Point :</b> <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0A<b>Using Compiler :</b> <code>${KBUILD_COMPILER_STRING}</code>%0A<b>Started on :</b> <code>$(TZ=Asia/Jakarta date)</code>%0A<b>DroneCI Status :</b> <a href='https://cloud.drone.io/Mina-Project/kernel_xiaomi_lavender'>here</a>"
 }
 # Push kernel to channel
 function push() {
